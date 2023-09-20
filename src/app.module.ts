@@ -9,9 +9,7 @@ import { BaseModule } from './base';
 import { CommonModule, ExceptionsFilter } from './common';
 import { configuration, loggerOptions } from './config';
 import { SampleModule as DebugSampleModule } from './debug';
-import { SampleRPCModule } from './samplegRPC';
 import { GqlModule } from './gql';
-import { SampleModule } from './sample';
 
 @Module({
   imports: [
@@ -42,17 +40,11 @@ import { SampleModule } from './sample';
     // Service Modules
     CommonModule, // Global
     BaseModule,
-    SampleModule,
-    SampleRPCModule,
     GqlModule,
     DebugSampleModule,
     // Module Router
     // https://docs.nestjs.com/recipes/router-module
     RouterModule.register([
-      {
-        path: 'test',
-        module: SampleModule,
-      },
       {
         path: 'test',
         module: DebugSampleModule,
