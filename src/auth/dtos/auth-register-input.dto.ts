@@ -4,7 +4,7 @@ import {
   IsEmail,
   IsString,
   Length,
-  MaxLength
+  MaxLength,
 } from 'class-validator';
 
 export class RegisterInput {
@@ -26,5 +26,4 @@ export class RegisterInput {
   @ApiProperty()
   @IsBoolean()
   isAcceptPolicy!: boolean;
-  
 }

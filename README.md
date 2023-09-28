@@ -1,6 +1,6 @@
-# Askany
+# Prime Edu
 
-Node.js framework NestJS project structure
+Node.js framework NestJS project structure for Project
 
 ## Configuration
 

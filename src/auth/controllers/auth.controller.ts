@@ -1,7 +1,9 @@
 import {
   Body,
   ClassSerializerInterceptor,
-  Controller, Post, UseInterceptors
+  Controller,
+  Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import { Public } from '../../common';
@@ -14,17 +16,14 @@ import { UserOutputDto } from '../../modules/user/dto';
  */
 @Controller('')
 export class AuthController {
-  constructor(
-    private authService: AuthService
-  ) {}
+  constructor(private authService: AuthService) {}
 
   @Post('register')
   @Public()
   @UseInterceptors(ClassSerializerInterceptor)
   public async register(
-    @Body() body: RegisterInput
+    @Body() body: RegisterInput,
   ): Promise<BaseApiResponse<UserOutputDto>> {
     return this.authService.register(body);
   }
-
 }

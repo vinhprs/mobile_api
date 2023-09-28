@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { RoleOutput } from '../dtos/role-output.dto';
-import { UserOutputDto } from '../../modules/user/dto/user-output.dto'
+import { UserOutputDto } from '../../modules/user/dto/user-output.dto';
 
 export class UserAccessTokenClaims {
   @Expose()

@@ -6,6 +6,6 @@ import * as providers from './providers';
 @Module({
   imports: [ConfigModule, CommonModule, HttpModule],
   providers: Object.values(providers),
-  exports: Object.values(providers)
+  exports: Object.values(providers),
 })
 export class SharedModule {}

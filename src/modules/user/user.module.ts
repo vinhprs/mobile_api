@@ -7,16 +7,9 @@ import { UserService } from './providers';
 import { CommonModule } from 'src/common';
 
 @Module({
-  imports: [
-  CommonModule,
-  TypeOrmModule.forFeature([
-    User, 
-    Permission, 
-    Role
-  ])
-],
+  imports: [CommonModule, TypeOrmModule.forFeature([User, Permission, Role])],
   controllers: [UserController],
   providers: Object.values(providers),
-  exports: [UserService]
+  exports: [UserService],
 })
 export class UserModule {}

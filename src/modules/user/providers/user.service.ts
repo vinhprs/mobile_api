@@ -19,8 +19,8 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private config: ConfigService,
-    private readonly roleService: RoleService
-  ) { }
+    private readonly roleService: RoleService,
+  ) {}
 
   public async create(data: RegisterInput): Promise<User> {
     const userExist = await this.userRepository.findOne({
@@ -63,7 +63,7 @@ export class UserService {
 
   public async update(
     id: string,
-    data: UpdateProfileDto
+    data: UpdateProfileDto,
   ): Promise<BaseApiResponse<UserOutputDto>> {
     const user = await this.userRepository.findOne({
       where: {

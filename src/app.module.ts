@@ -19,7 +19,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 
 @Module({
   imports: [
-     // Configuration
+    // Configuration
     // https://docs.nestjs.com/techniques/configuration
     ConfigModule.forRoot({
       isGlobal: true,
@@ -36,7 +36,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
           user: process.env.EMAIL_ACCOUNT,
           pass: process.env.EMAIL_PASSWORD,
         },
-        logger: true
+        logger: true,
       },
       template: {
         dir: join(__dirname, './shared/templates'),
@@ -49,7 +49,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
     // https://getpino.io
     // https://github.com/iamolegga/nestjs-pino
     LoggerModule.forRoot(loggerOptions),
-   
+
     // Database
     // https://docs.nestjs.com/techniques/database
     TypeOrmModule.forRootAsync({

@@ -11,17 +11,16 @@ import { MailService } from '../shared/providers';
 import { MAIL_TEMPLATE, MESSAGES } from 'src/common/constants/common';
 import { plainToInstance } from 'class-transformer';
 
-
 @Injectable()
 export class AuthService {
   constructor(
     private jwt: JwtService,
     private readonly userService: UserService,
-    private readonly mailService: MailService
+    private readonly mailService: MailService,
   ) {}
 
   public async register(
-    data: RegisterInput
+    data: RegisterInput,
   ): Promise<BaseApiResponse<UserOutputDto>> {
     const createdUser = await this.userService.create(data);
     const jwt = this.generateToken(createdUser);
@@ -46,7 +45,7 @@ export class AuthService {
       message: MESSAGES.CREATED_SUCCEED,
       code: 0,
     });
-  } 
+  }
 
   public generateToken(user: User | UserOutputDto): {
     accessToken: string;
@@ -83,11 +82,15 @@ export class AuthService {
       fullname: user.fullname,
       verification_url: `${process.env.VERIFICATION_DOMAIN}/auth/vertify-email?email=${user.email}&code=${user.emailVerifyCode}`,
     };
-    this.mailService.sendMail(
-      user.email,
-      subject,
-      context,
-      MAIL_TEMPLATE.VERIFY_EMAIL_TEMPLATE,
-    ).then(() => { return true });
+    this.mailService
+      .sendMail(
+        user.email,
+        subject,
+        context,
+        MAIL_TEMPLATE.VERIFY_EMAIL_TEMPLATE,
+      )
+      .then(() => {
+        return true;
+      });
   }
 }

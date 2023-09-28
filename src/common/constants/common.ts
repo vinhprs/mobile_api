@@ -41,4 +41,3 @@ export const MAIL_TEMPLATE = {
   FORGOT_PASSWORD_TEMPLATE: 'forgot-password',
   UPDATE_EMAIL_TEMPLATE: 'update-email',
 };
-
