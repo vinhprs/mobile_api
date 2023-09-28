@@ -9,7 +9,9 @@ import { BaseModule } from './base';
 import { CommonModule, ExceptionsFilter } from './common';
 import { configuration, loggerOptions } from './config';
 import { SampleModule as DebugSampleModule } from './debug';
-import { GqlModule } from './gql';
+import { GqlModuleOptions, GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver } from '@nestjs/apollo';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -30,6 +32,15 @@ import { GqlModule } from './gql';
       }),
       inject: [ConfigService],
     }),
+
+    // GraphQL
+    GraphQLModule.forRootAsync({
+      driver: ApolloDriver,
+      useFactory: (config: ConfigService) => ({
+        ...config.get<GqlModuleOptions>('graphql'),
+      }),
+      inject: [ConfigService],
+    }),
     // Static Folder
     // https://docs.nestjs.com/recipes/serve-static
     // https://docs.nestjs.com/techniques/mvc
@@ -40,7 +51,6 @@ import { GqlModule } from './gql';
     // Service Modules
     CommonModule, // Global
     BaseModule,
-    GqlModule,
     DebugSampleModule,
     // Module Router
     // https://docs.nestjs.com/recipes/router-module
@@ -50,6 +60,7 @@ import { GqlModule } from './gql';
         module: DebugSampleModule,
       },
     ]),
+    UserModule,
   ],
   providers: [
     // Global Guard, Authentication check on all routers

@@ -1,3 +1,4 @@
+import { join } from 'path';
 export const config = {
   db: {
     // entities: [`${__dirname}/../../entity/**/*.{js,ts}`],
@@ -5,17 +6,14 @@ export const config = {
     // migrations: [`${__dirname}/../../migration/**/*.{js,ts}`],
   },
   graphql: {
-    debug: true,
-    playground: {
-      settings: {
-        'request.credentials': 'include',
-      },
+    autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+    cors: {
+      credentials: true,
+      origin: ['http://localhost:3000'],
     },
-    autoSchemaFile: true,
+    installSubscriptionHandlers: true,
     autoTransformHttpErrors: true,
-    // cors: { credentials: true },
-    // sortSchema: true,
-    // installSubscriptionHandlers: true,
+    debug: false,
   },
   hello: 'world',
   jwtSecret: process.env.JWT_SECRET,
