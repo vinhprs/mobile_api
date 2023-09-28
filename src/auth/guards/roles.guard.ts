@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlContextType, GqlExecutionContext } from '@nestjs/graphql';
 import type { Request } from 'express';
+import { RoleOutput } from '../dtos';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -15,7 +16,6 @@ export class RolesGuard implements CanActivate {
         context.getClass(), // Controller Roles
       ],
     );
-
     if (!roles) {
       return true;
     }
@@ -33,6 +33,11 @@ export class RolesGuard implements CanActivate {
       return false;
     }
 
-    return user.roles.some((role: string) => roles.includes(role));
+    return user.roles.some((role: RoleOutput) => {
+      if (roles && roles.length) {
+        return roles.includes(role.roleName);
+      }
+      return false;
+    });
   }
 }

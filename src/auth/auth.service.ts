@@ -1,65 +1,93 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { UserService } from '../modules/user/providers';
+import { RegisterInput } from './dtos';
+import { BaseApiResponse } from 'src/shared/dtos';
+import { UserOutputDto } from '../modules/user/dto';
+import { User } from 'src/modules/user/entities';
 import { JwtService } from '@nestjs/jwt';
+import { JwtPayload, Payload, RefreshTokenPayload } from './auth.interface';
+import { generateCode } from 'src/shared/utils/user.util';
+import { MailService } from '../shared/providers';
+import { MAIL_TEMPLATE, MESSAGES } from 'src/common/constants/common';
+import { plainToInstance } from 'class-transformer';
 
-import type { JwtPayload, JwtSign, Payload } from './auth.interface';
-import { User, UserService } from '../shared/user';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwt: JwtService,
-    private user: UserService,
-    private config: ConfigService,
+    private readonly userService: UserService,
+    private readonly mailService: MailService
   ) {}
 
-  public async validateUser(
-    username: string,
-    password: string,
-  ): Promise<User | null> {
-    const user = await this.user.fetch(username);
+  public async register(
+    data: RegisterInput
+  ): Promise<BaseApiResponse<UserOutputDto>> {
+    const createdUser = await this.userService.create(data);
+    const jwt = this.generateToken(createdUser);
+    const emailVerifyCode = generateCode();
 
-    if (user.password === password) {
-      const { password: pass, ...result } = user;
-      return result;
-    }
+    await this.userService.update(createdUser._id, {
+      refreshToken: jwt.refreshToken,
+      emailVerifyCode: emailVerifyCode,
+    });
+    createdUser.emailVerifyCode = emailVerifyCode;
+    this.sendEmailVerification(createdUser);
+    const userOutput = plainToInstance(UserOutputDto, createdUser, {
+      excludeExtraneousValues: true,
+    });
+    return plainToInstance(BaseApiResponse<UserOutputDto>, {
+      error: false,
+      data: {
+        token: jwt.accessToken,
+        refreshToken: jwt.refreshToken,
+        infoUser: userOutput,
+      },
+      message: MESSAGES.CREATED_SUCCEED,
+      code: 0,
+    });
+  } 
 
-    return null;
+  public generateToken(user: User | UserOutputDto): {
+    accessToken: string;
+    refreshToken: string;
+  } {
+    return {
+      accessToken: this.generateAccessToken({
+        id: user._id,
+        email: user.email,
+        roles: user.roles,
+      }),
+      refreshToken: this.generateRefreshToken({
+        sub: user._id,
+      }),
+    };
   }
 
-  public validateRefreshToken(data: Payload, refreshToken: string): boolean {
-    if (
-      !this.jwt.verify(refreshToken, {
-        secret: this.config.get('jwtRefreshSecret'),
-      })
-    ) {
-      return false;
-    }
-
-    const payload = <{ sub: string }>this.jwt.decode(refreshToken);
-    return payload.sub === data.userId;
-  }
-
-  public jwtSign(data: Payload): JwtSign {
+  public generateAccessToken(data: Payload): string {
     const payload: JwtPayload = {
-      sub: data.userId,
-      username: data.username,
+      sub: data.id,
+      email: data.email,
       roles: data.roles,
     };
-
-    return {
-      access_token: this.jwt.sign(payload),
-      refresh_token: this.getRefreshToken(payload.sub),
-    };
+    return this.jwt.sign(payload);
   }
 
-  private getRefreshToken(sub: string): string {
-    return this.jwt.sign(
-      { sub },
-      {
-        secret: this.config.get('jwtRefreshSecret'),
-        expiresIn: '7d', // Set greater than the expiresIn of the access_token
-      },
-    );
+  public generateRefreshToken(data: RefreshTokenPayload): string {
+    return this.jwt.sign(data);
+  }
+
+  public sendEmailVerification(user: User) {
+    const subject = 'Askany - Xác thực tài khoản';
+    const context = {
+      fullname: user.fullname,
+      verification_url: `${process.env.VERIFICATION_DOMAIN}/auth/vertify-email?email=${user.email}&code=${user.emailVerifyCode}`,
+    };
+    this.mailService.sendMail(
+      user.email,
+      subject,
+      context,
+      MAIL_TEMPLATE.VERIFY_EMAIL_TEMPLATE,
+    ).then(() => { return true });
   }
 }

@@ -11,7 +11,7 @@ export class LoggerContextMiddleware implements NestMiddleware {
   constructor(private readonly logger: PinoLogger) {}
 
   public use(req: Request, _res: Response, next: () => void): void {
-    const user = req.user?.userId;
+    const user = req.user?.id;
     // Add extra fields to share in logger context
     this.logger.assign({ user });
 

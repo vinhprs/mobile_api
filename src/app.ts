@@ -6,7 +6,7 @@ import { middleware } from './app.middleware';
 import { AppModule } from './app.module';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { JwtAuthGuard } from './auth';
-import { RolesGuard } from './common';
+import { RolesGuard } from './auth/guards/roles.guard';
 
 async function bootstrap(): Promise<string> {
   const isProduction = process.env.NODE_ENV === 'production';

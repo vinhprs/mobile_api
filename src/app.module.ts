@@ -9,21 +9,47 @@ import { BaseModule } from './base';
 import { CommonModule, ExceptionsFilter } from './common';
 import { configuration, loggerOptions } from './config';
 import { SampleModule as DebugSampleModule } from './debug';
-import { GqlModuleOptions, GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver } from '@nestjs/apollo';
 import { UserModule } from './modules/user/user.module';
+import { ProfileModule } from './modules/profile/profile.module';
+import { AuthModule } from './auth';
+import { SharedModule } from './shared/share.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { join } from 'path';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Module({
   imports: [
-    // https://getpino.io
-    // https://github.com/iamolegga/nestjs-pino
-    LoggerModule.forRoot(loggerOptions),
-    // Configuration
+     // Configuration
     // https://docs.nestjs.com/techniques/configuration
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
     }),
+    MailerModule.forRoot({
+      transport: {
+        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 587,
+        requireTLS: true,
+        secure: false,
+        auth: {
+          user: process.env.EMAIL_ACCOUNT,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+        logger: true
+      },
+      template: {
+        dir: join(__dirname, './shared/templates'),
+        adapter: new HandlebarsAdapter(),
+        options: {
+          strict: true,
+        },
+      },
+    }),
+    // https://getpino.io
+    // https://github.com/iamolegga/nestjs-pino
+    LoggerModule.forRoot(loggerOptions),
+   
     // Database
     // https://docs.nestjs.com/techniques/database
     TypeOrmModule.forRootAsync({
@@ -33,14 +59,6 @@ import { UserModule } from './modules/user/user.module';
       inject: [ConfigService],
     }),
 
-    // GraphQL
-    GraphQLModule.forRootAsync({
-      driver: ApolloDriver,
-      useFactory: (config: ConfigService) => ({
-        ...config.get<GqlModuleOptions>('graphql'),
-      }),
-      inject: [ConfigService],
-    }),
     // Static Folder
     // https://docs.nestjs.com/recipes/serve-static
     // https://docs.nestjs.com/techniques/mvc
@@ -50,17 +68,19 @@ import { UserModule } from './modules/user/user.module';
     }),
     // Service Modules
     CommonModule, // Global
+    SharedModule,
     BaseModule,
     DebugSampleModule,
     // Module Router
     // https://docs.nestjs.com/recipes/router-module
     RouterModule.register([
       {
-        path: 'test',
-        module: DebugSampleModule,
+        path: 'auth',
+        module: AuthModule,
       },
     ]),
     UserModule,
+    ProfileModule,
   ],
   providers: [
     // Global Guard, Authentication check on all routers
