@@ -45,6 +45,10 @@ export class UserOutputDto {
 
   @Expose()
   @ApiProperty()
+  public emailVerifyCode: string;
+
+  @Expose()
+  @ApiProperty()
   public birthDate: Date;
 
   @Expose()

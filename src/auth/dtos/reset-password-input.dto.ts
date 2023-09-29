@@ -4,4 +4,8 @@ export class ResetPasswordInput {
   @IsNotEmpty()
   @IsString()
   password!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  code!: string;
 }

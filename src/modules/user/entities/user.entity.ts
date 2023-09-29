@@ -21,6 +21,9 @@ export class User {
   @Column('varchar', { nullable: true, length: 255, name: 'username' })
   username?: string;
 
+  @Column('varchar', { nullable: false, length: 255, name: 'password' })
+  password!: string;
+
   @Column('varchar', { nullable: true, length: 255, name: 'phone' })
   phone?: string;
 
@@ -45,7 +48,7 @@ export class User {
   isAcceptPolicy!: boolean;
 
   @Column('varchar', { nullable: true, name: 'email_verify_code', length: 255 })
-  emailVerifyCode?: string;
+  emailVerifyCode?: string | null;
 
   @Column('varchar', { nullable: true, name: 'refresh_token' })
   refreshToken?: string;

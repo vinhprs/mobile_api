@@ -1,3 +1,7 @@
+export const REQUEST_ID_TOKEN_HEADER = 'x-request-id';
+
+export const FORWARDED_FOR_TOKEN_HEADER = 'x-forwarded-for';
+
 export const MESSAGES = {
   GET_SUCCEED: 'get_succeed',
   CREATED_SUCCEED: 'created_model_succeed',
@@ -22,6 +26,7 @@ export const MESSAGES = {
   NOT_FOUND_USER: 'not_found_user',
   NOT_FOUND: 'not_found',
   INVALID_CODE: 'invalid_code',
+  VERIFY_SUCCESS: 'verify_succes',
   CONFIRMED_ACCOUNT: 'confirmed_account',
   UNCONFIRMED_ACCOUNT: 'unconfirmed_account',
   LOCKED_ACCOUNT: 'account_has_been_locked',
