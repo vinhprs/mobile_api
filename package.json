@@ -1,6 +1,9 @@
 {
   "name": "askany-system",
   "version": "0.0.0",
+  "engines": {
+    "node": "18.x"
+  },
   "description": "Askany Auth Service",
   "main": "dist/app",
   "scripts": {
