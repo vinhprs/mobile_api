@@ -27,7 +27,11 @@ export function middleware(app: INestApplication): INestApplication {
       crossOriginEmbedderPolicy: isProduction ? undefined : false,
     }),
   );
-  // app.enableCors();
+  app.enableCors({
+    origin: ['http://localhost:3000', 'http://localhost:4000'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    credentials: true,
+  });
 
   return app;
 }
