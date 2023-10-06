@@ -3,20 +3,21 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
-import { LoginInput } from 'src/auth/dtos/auth-login-input.dto';
-import { MESSAGES } from 'src/common/constants/common';
-import { UpdateProfileDto } from 'src/modules/profile/dto/update-profile.dto';
-import { BaseApiResponse } from 'src/shared/dtos';
-import { ROLES } from 'src/shared/enums';
+import { LoginInput } from '../../../auth/dtos/auth-login-input.dto';
+import { MESSAGES } from '../../../common/constants/common';
+import { UpdateProfileDto } from '../../../modules/profile/dto/update-profile.dto';
+import { BaseApiResponse } from '../../../shared/dtos';
+import { ROLES } from '../../../shared/enums';
 import { Repository } from 'typeorm';
 import {
   RegisterInput,
   ResetPasswordInput,
   VerifyEmailInput,
 } from '../../../auth/dtos';
-import { UserOutputDto } from '../dto';
+import { UpdateUserInput, UserOutputDto } from '../dto';
 import { User } from '../entities';
 import { RoleService } from './role.service';
+import { AddressService } from 'src/modules/address/address.service';
 
 @Injectable()
 export class UserService {
@@ -25,6 +26,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     private config: ConfigService,
     private readonly roleService: RoleService,
+    private readonly addressService: AddressService,
   ) {}
 
   public async getUserByEmail(email: string): Promise<UserOutputDto> {
@@ -37,14 +39,13 @@ export class UserService {
     });
   }
 
-  public async getUserByUserId(_id: string): Promise<UserOutputDto> {
+  public async getUserByUserId(_id: string): Promise<User | null> {
     const user = await this.userRepository.findOne({
       where: { _id },
+      relations: ['roles', 'roles.permissions'],
     });
 
-    return plainToInstance(UserOutputDto, user, {
-      excludeExtraneousValues: true,
-    });
+    return user;
   }
 
   public async create(data: RegisterInput): Promise<User> {
@@ -59,7 +60,7 @@ export class UserService {
           error: true,
           data: null,
           message: MESSAGES.EMAIL_EXISTS,
-          code: 1,
+          code: 409,
         },
         HttpStatus.BAD_REQUEST,
       );
@@ -75,7 +76,7 @@ export class UserService {
           error: true,
           data: null,
           message: MESSAGES.ROLE_NOT_FOUND,
-          code: 4,
+          code: 404,
         },
         HttpStatus.BAD_REQUEST,
       );
@@ -98,7 +99,7 @@ export class UserService {
           error: true,
           data: null,
           message: MESSAGES.NOT_FOUND_USER,
-          code: 4,
+          code: 404,
         },
         HttpStatus.BAD_REQUEST,
       );
@@ -109,7 +110,7 @@ export class UserService {
           error: true,
           data: null,
           message: MESSAGES.UNAUTHORIZED,
-          code: 1,
+          code: 401,
         },
         HttpStatus.BAD_REQUEST,
       );
@@ -131,7 +132,7 @@ export class UserService {
           error: true,
           data: null,
           message: MESSAGES.UNAUTHORIZED,
-          code: 1,
+          code: 401,
         },
         HttpStatus.BAD_REQUEST,
       );
@@ -147,7 +148,7 @@ export class UserService {
       error: false,
       data: result,
       message: MESSAGES.VERIFY_SUCCESS,
-      code: 0,
+      code: 200,
     };
   }
 
@@ -163,7 +164,7 @@ export class UserService {
           error: true,
           data: null,
           message: MESSAGES.NOT_FOUND_USER,
-          code: 1,
+          code: 404,
         },
         HttpStatus.BAD_REQUEST,
       );
@@ -173,7 +174,7 @@ export class UserService {
           error: true,
           data: null,
           message: MESSAGES.INVALID_CODE,
-          code: 1,
+          code: 400,
         },
         HttpStatus.BAD_REQUEST,
       );
@@ -189,7 +190,7 @@ export class UserService {
       error: false,
       data: null,
       message: MESSAGES.UPDATE_SUCCEED,
-      code: 0,
+      code: 200,
     };
   }
 
@@ -207,7 +208,7 @@ export class UserService {
         {
           error: true,
           message: MESSAGES.NOT_FOUND_USER,
-          code: 4,
+          code: 404,
         },
         HttpStatus.BAD_REQUEST,
       );
@@ -221,7 +222,40 @@ export class UserService {
       error: false,
       data: result,
       message: MESSAGES.UPDATE_SUCCEED,
-      code: 0,
+      code: 200,
+    };
+  }
+
+  public async updateProfile(
+    id: string,
+    data: UpdateUserInput,
+  ): Promise<BaseApiResponse<UserOutputDto>> {
+    const { address } = data;
+    const user = await this.getUserByUserId(id);
+    if (!user)
+      throw new HttpException(
+        {
+          error: true,
+          message: MESSAGES.NOT_FOUND_USER,
+          code: 404,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    this.userRepository.merge(user, data);
+    const userAddr = await this.addressService.createAddress(address);
+    const updated = await this.userRepository.save({
+      ...user,
+      address: userAddr,
+    });
+    // create user into realtime service
+    const result = plainToInstance(UserOutputDto, updated, {
+      excludeExtraneousValues: true,
+    });
+    return {
+      error: false,
+      data: result,
+      message: MESSAGES.UPDATE_SUCCEED,
+      code: 200,
     };
   }
 }

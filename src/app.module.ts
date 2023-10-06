@@ -5,7 +5,6 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { LoggerModule } from 'nestjs-pino';
 
-import { BaseModule } from './base';
 import { CommonModule, ExceptionsFilter } from './common';
 import { configuration, loggerOptions } from './config';
 import { SampleModule as DebugSampleModule } from './debug';
@@ -16,6 +15,8 @@ import { SharedModule } from './shared/share.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { join } from 'path';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { SubjectsModule } from './modules/subjects/subjects.module';
+import { AddressModule } from './modules/address/address.module';
 
 @Module({
   imports: [
@@ -69,7 +70,6 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
     // Service Modules
     CommonModule, // Global
     SharedModule,
-    BaseModule,
     DebugSampleModule,
     // Module Router
     // https://docs.nestjs.com/recipes/router-module
@@ -78,9 +78,23 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
         path: 'auth',
         module: AuthModule,
       },
+      {
+        path: 'user',
+        module: UserModule,
+      },
+      {
+        path: 'address',
+        module: AddressModule,
+      },
+      {
+        path: 'subjects',
+        module: SubjectsModule,
+      },
     ]),
     UserModule,
     ProfileModule,
+    SubjectsModule,
+    AddressModule,
   ],
   providers: [
     // Global Guard, Authentication check on all routers

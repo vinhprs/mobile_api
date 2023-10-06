@@ -8,6 +8,7 @@ export const config = {
   jwtSecret: process.env.JWT_SECRET,
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
   saltRounds: 7,
+  vnProvinceDomain: process.env.VN_PROVINCE_DOMAIN,
   jwt: {
     publicKey: Buffer.from(process.env.JWT_PUBLIC, 'base64').toString('utf-8'),
     privateKey: Buffer.from(process.env.JWT_SECRET, 'base64').toString('utf-8'),

@@ -2,20 +2,22 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { plainToInstance } from 'class-transformer';
 import { MAIL_TEMPLATE, MESSAGES } from 'src/common/constants/common';
-import { User } from 'src/modules/user/entities';
+import { User } from '../modules/user/entities';
 import { BaseApiResponse } from 'src/shared/dtos';
-import { generateCode } from 'src/shared/utils/user.util';
+import { generateCode } from '../shared/utils/user.util';
 import { UserOutputDto } from '../modules/user/dto';
 import { UserService } from '../modules/user/providers';
 import { MailService } from '../shared/providers';
 import { JwtPayload, Payload, RefreshTokenPayload } from './auth.interface';
 import { ForgotPassword, RegisterInput } from './dtos';
 import { LoginInput } from './dtos/auth-login-input.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwt: JwtService,
+    private config: ConfigService,
     private readonly userService: UserService,
     private readonly mailService: MailService,
   ) {}
@@ -44,7 +46,7 @@ export class AuthService {
         infoUser: userOutput,
       },
       message: MESSAGES.CREATED_SUCCEED,
-      code: 0,
+      code: 200,
     });
   }
 
@@ -58,7 +60,7 @@ export class AuthService {
           error: true,
           data: null,
           message: MESSAGES.UNCONFIRMED_ACCOUNT,
-          code: 1,
+          code: 400,
         },
         HttpStatus.BAD_REQUEST,
       );
@@ -74,7 +76,7 @@ export class AuthService {
         infoUser: user,
       },
       message: MESSAGES.UPDATE_SUCCEED,
-      code: 0,
+      code: 200,
     });
   }
 
@@ -94,6 +96,51 @@ export class AuthService {
     };
   }
 
+  async refreshToken(
+    userId: string,
+    token: string,
+  ): Promise<BaseApiResponse<UserOutputDto>> {
+    const user = await this.userService.getUserByUserId(userId);
+    if (!user)
+      throw new HttpException(
+        {
+          error: true,
+          data: null,
+          message: MESSAGES.NOT_FOUND_USER,
+          code: 400,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    const userOutput = plainToInstance(UserOutputDto, user, {
+      excludeExtraneousValues: true,
+    });
+    const isValid = this.validateRefreshToken(user, token);
+    if (!isValid)
+      throw new HttpException(
+        {
+          error: true,
+          data: null,
+          message: MESSAGES.INVALID_TOKEN,
+          code: 400,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    const jwt = this.generateToken(user);
+    await this.userService.update(user._id, {
+      refreshToken: jwt.refreshToken,
+    });
+    return plainToInstance(BaseApiResponse<UserOutputDto>, {
+      error: false,
+      data: {
+        token: jwt.accessToken,
+        refreshToken: jwt.refreshToken,
+        infoUser: userOutput,
+      },
+      message: MESSAGES.UPDATE_SUCCEED,
+      code: 200,
+    });
+  }
+
   public async forgotPassword(
     data: ForgotPassword,
   ): Promise<BaseApiResponse<null>> {
@@ -106,7 +153,7 @@ export class AuthService {
           error: true,
           data: null,
           message: MESSAGES.NOT_FOUND_USER,
-          code: 1,
+          code: 404,
         },
         HttpStatus.BAD_REQUEST,
       );
@@ -120,8 +167,22 @@ export class AuthService {
       error: false,
       data: null,
       message: MESSAGES.SENT_EMAIL_TO_RECOVER_PASSWORD,
-      code: 0,
+      code: 200,
     };
+  }
+
+  public validateRefreshToken(user: User, refreshToken: string): boolean {
+    const verified = this.jwt.verify(refreshToken, {
+      secret: this.config.get<string>('jwt.privateKey'),
+    });
+    if (!verified.sub || !user.refreshToken) {
+      return false;
+    }
+    if (user.refreshToken !== refreshToken) {
+      return false;
+    }
+    const payload = <{ sub: string }>this.jwt.decode(refreshToken);
+    return payload.sub === user._id;
   }
 
   public generateAccessToken(data: Payload): string {
@@ -137,8 +198,24 @@ export class AuthService {
     return this.jwt.sign(data);
   }
 
+  public async resendEmail(email: string): Promise<BaseApiResponse<null>> {
+    const user = await this.userService.getUserByEmail(email);
+    const emailVerifyCode = generateCode();
+    await this.userService.update(user._id, {
+      emailVerifyCode: emailVerifyCode,
+    });
+    user.emailVerifyCode = emailVerifyCode;
+    this.sendEmailVerification(user);
+    return {
+      error: false,
+      data: null,
+      message: MESSAGES.RESEND_SUCCESS,
+      code: 200,
+    };
+  }
+
   public sendEmailVerification(user: User | UserOutputDto) {
-    const subject = 'Askany - Xác thực tài khoản';
+    const subject = 'Prime Edu - Xác thực tài khoản';
     const context = {
       fullname: user.fullname,
       verifyCode: user.emailVerifyCode,

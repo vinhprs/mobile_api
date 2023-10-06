@@ -3,21 +3,26 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Post,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from '../auth.service';
 import { Public, ReqUser } from '../../common';
 import {
   ForgotPassword,
+  RefreshTokenInput,
   RegisterInput,
   ResetPasswordInput,
   VerifyEmailInput,
+  ResendEmailInput,
 } from '../dtos';
 import { BaseApiResponse } from '../../shared/dtos';
 import { UserOutputDto } from '../../modules/user/dto';
 import { LoginInput } from '../dtos/auth-login-input.dto';
-import { UserService } from 'src/modules/user/providers';
+import { UserService } from '../../modules/user/providers';
 import { UserAccessTokenClaims } from '../dtos/auth-output.dto';
+import { JwtRefreshGuard } from '../guards';
+import { RequestContext } from '../../shared/request-context/request-context.dto';
 
 /**
  * route /auth/*
@@ -54,6 +59,25 @@ export class AuthController {
     @Body() body: VerifyEmailInput,
   ): Promise<BaseApiResponse<UserOutputDto>> {
     return this.userService.verifyEmail(body);
+  }
+
+  @Post('resend-email')
+  @Public()
+  @UseInterceptors(ClassSerializerInterceptor)
+  public async resendEmail(
+    @Body() body: ResendEmailInput,
+  ): Promise<BaseApiResponse<null>> {
+    return this.authService.resendEmail(body.email);
+  }
+
+  @Post('refresh-token')
+  @UseGuards(JwtRefreshGuard)
+  @UseInterceptors(ClassSerializerInterceptor)
+  public async refreshToken(
+    @ReqUser() ctx: RequestContext,
+    @Body() body: RefreshTokenInput,
+  ): Promise<BaseApiResponse<UserOutputDto>> {
+    return this.authService.refreshToken(ctx.user.id, body.refreshToken);
   }
 
   @Post('forgot-password')

@@ -1,11 +1,14 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Role } from './';
+import { Address } from '../../../modules/address/entities';
 
 @Entity({ name: 'user' })
 export class User {
@@ -27,11 +30,17 @@ export class User {
   @Column('varchar', { nullable: true, length: 255, name: 'phone' })
   phone?: string;
 
-  @Column('integer', { nullable: true, name: 'gender' })
-  gender?: number;
+  @Column('boolean', { nullable: true, name: 'gender' })
+  gender?: boolean;
 
   @Column('date', { nullable: true, name: 'birth_date' })
   birthDate?: Date;
+
+  @Column('text', { nullable: true, name: 'preferred_subjects', array: true })
+  subjects: number[];
+
+  @Column('int', { nullable: true, name: 'subject_group_id' })
+  subjectGroup: number;
 
   @Column('boolean', {
     nullable: false,
@@ -70,4 +79,11 @@ export class User {
   @ManyToMany(() => Role)
   @JoinTable()
   roles: Role[];
+
+  @OneToOne(() => Address, (address) => address.user, {
+    eager: true,
+    cascade: ['insert', 'update'],
+  })
+  @JoinColumn({ name: 'address_id' })
+  address: Address;
 }

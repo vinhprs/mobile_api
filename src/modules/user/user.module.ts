@@ -5,9 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Permission, Role, User } from './entities';
 import { UserService } from './providers';
 import { CommonModule } from 'src/common';
+import { AddressModule } from '../address/address.module';
 
 @Module({
-  imports: [CommonModule, TypeOrmModule.forFeature([User, Permission, Role])],
+  imports: [
+    CommonModule,
+    AddressModule,
+    TypeOrmModule.forFeature([User, Permission, Role]),
+  ],
   controllers: [UserController],
   providers: Object.values(providers),
   exports: [UserService],

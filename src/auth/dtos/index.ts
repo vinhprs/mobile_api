@@ -6,3 +6,4 @@ export * from './auth-refresh-token-input.dto';
 export * from './verify-email-input.dto';
 export * from './auth-forgot-password-input.dto';
 export * from './reset-password-input.dto';
+export * from './resend-email-input.dto';

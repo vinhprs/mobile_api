@@ -41,7 +41,7 @@ export class UserOutputDto {
 
   @Expose()
   @ApiProperty()
-  public gender: number;
+  public gender: boolean;
 
   @Expose()
   @ApiProperty()
