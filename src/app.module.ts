@@ -71,6 +71,7 @@ import { AddressModule } from './modules/address/address.module';
     CommonModule, // Global
     SharedModule,
     DebugSampleModule,
+    AuthModule,
     // Module Router
     // https://docs.nestjs.com/recipes/router-module
     RouterModule.register([
