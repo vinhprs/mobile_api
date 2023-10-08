@@ -168,6 +168,7 @@ export class UserService {
         },
         HttpStatus.BAD_REQUEST,
       );
+    console.log(code, user)
     if (code !== user.emailVerifyCode)
       throw new HttpException(
         {

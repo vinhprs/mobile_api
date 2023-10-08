@@ -6,23 +6,22 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AuthService } from '../auth.service';
 import { Public, ReqUser } from '../../common';
+import { UserOutputDto } from '../../modules/user/dto';
+import { UserService } from '../../modules/user/providers';
+import { BaseApiResponse } from '../../shared/dtos';
+import { RequestContext } from '../../shared/request-context/request-context.dto';
+import { AuthService } from '../auth.service';
 import {
   ForgotPassword,
   RefreshTokenInput,
   RegisterInput,
+  ResendEmailInput,
   ResetPasswordInput,
   VerifyEmailInput,
-  ResendEmailInput,
 } from '../dtos';
-import { BaseApiResponse } from '../../shared/dtos';
-import { UserOutputDto } from '../../modules/user/dto';
 import { LoginInput } from '../dtos/auth-login-input.dto';
-import { UserService } from '../../modules/user/providers';
-import { UserAccessTokenClaims } from '../dtos/auth-output.dto';
 import { JwtRefreshGuard } from '../guards';
-import { RequestContext } from '../../shared/request-context/request-context.dto';
 
 /**
  * route /auth/*
@@ -90,12 +89,11 @@ export class AuthController {
   }
 
   @Post('reset-password')
-  @Public()
   @UseInterceptors(ClassSerializerInterceptor)
   public async resetPassword(
-    @ReqUser() user: UserAccessTokenClaims,
+    @ReqUser() req: RequestContext,
     @Body() body: ResetPasswordInput,
   ): Promise<BaseApiResponse<null>> {
-    return this.userService.resetPassword(user.id, body);
+    return this.userService.resetPassword(req.user.id, body);
   }
 }
