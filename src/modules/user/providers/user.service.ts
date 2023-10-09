@@ -153,10 +153,9 @@ export class UserService {
   }
 
   public async resetPassword(
-    userId: string,
     data: ResetPasswordInput,
   ): Promise<BaseApiResponse<null>> {
-    const { password, code } = data;
+    const { password, code, userId } = data;
     const user = await this.getUserByUserId(userId);
     if (!user)
       throw new HttpException(

@@ -89,11 +89,11 @@ export class AuthController {
   }
 
   @Post('reset-password')
+  @Public()
   @UseInterceptors(ClassSerializerInterceptor)
   public async resetPassword(
-    @ReqUser() req: RequestContext,
     @Body() body: ResetPasswordInput,
   ): Promise<BaseApiResponse<null>> {
-    return this.userService.resetPassword(req.user.id, body);
+    return this.userService.resetPassword(body);
   }
 }
