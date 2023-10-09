@@ -84,7 +84,7 @@ export class AuthController {
   @UseInterceptors(ClassSerializerInterceptor)
   public async forgotPassword(
     @Body() body: ForgotPassword,
-  ): Promise<BaseApiResponse<null>> {
+  ): Promise<BaseApiResponse<UserOutputDto>> {
     return this.authService.forgotPassword(body);
   }
 

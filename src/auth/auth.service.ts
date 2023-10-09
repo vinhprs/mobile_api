@@ -143,7 +143,7 @@ export class AuthService {
 
   public async forgotPassword(
     data: ForgotPassword,
-  ): Promise<BaseApiResponse<null>> {
+  ): Promise<BaseApiResponse<UserOutputDto>> {
     const { email } = data;
     const user = await this.userService.getUserByEmail(email);
 
@@ -163,9 +163,12 @@ export class AuthService {
     });
     user.emailVerifyCode = emailVerifyCode;
     this.sendForgotPassword(user);
+    const result = plainToInstance(UserOutputDto, user, {
+      excludeExtraneousValues: true
+    });
     return {
       error: false,
-      data: null,
+      data: result,
       message: MESSAGES.SENT_EMAIL_TO_RECOVER_PASSWORD,
       code: 200,
     };
