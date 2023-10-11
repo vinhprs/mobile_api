@@ -21,7 +21,6 @@ export class UserController {
     @ReqUser() ctx: RequestContext,
     @Body() data: UpdateUserInput,
   ): Promise<BaseApiResponse<UserOutputDto>> {
-    console.log(data);
     return this.userService.updateProfile(ctx.user.id, data);
   }
 }
