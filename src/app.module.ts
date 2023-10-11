@@ -17,6 +17,7 @@ import { join } from 'path';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { SubjectsModule } from './modules/subjects/subjects.module';
 import { AddressModule } from './modules/address/address.module';
+import { CategoryModule } from './modules/category/category.module';
 
 @Module({
   imports: [
@@ -91,11 +92,16 @@ import { AddressModule } from './modules/address/address.module';
         path: 'subjects',
         module: SubjectsModule,
       },
+      {
+        path: 'category',
+        module: CategoryModule,
+      },
     ]),
     UserModule,
     ProfileModule,
     SubjectsModule,
     AddressModule,
+    CategoryModule,
   ],
   providers: [
     // Global Guard, Authentication check on all routers
