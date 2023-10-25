@@ -54,7 +54,7 @@ PRIME-EDU-DEVELOPMENT-DELOY:
     variables:
         EXPOSE_PORT: 4000
         IMAGE_NAME: $CONTAINER_IMAGE:$ARCHIVE_IMAGE_TAG
-        CONTAINER_NAME: wingwriting-be-test
+        CONTAINER_NAME: prime-edu-be-develop
     stage: deploy
     tags:
         - PRIME-EDU-BE-DEVELOP

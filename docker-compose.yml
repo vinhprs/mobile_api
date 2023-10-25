@@ -4,6 +4,6 @@ services:
     build:
       context: .
     image: $IMAGE_NAME
-    container_name: backend
+    container_name: prime-edu-be-develop
     ports:
       - "$EXPOSE_PORT:4000"
