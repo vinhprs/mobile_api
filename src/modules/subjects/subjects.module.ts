@@ -7,5 +7,6 @@ import * as controllers from './controllers';
   imports: [TypeOrmModule.forFeature([Subject, SubjectGroup])],
   controllers: Object.values(controllers),
   providers: Object.values(providers),
+  exports: Object.values(providers),
 })
 export class SubjectsModule {}

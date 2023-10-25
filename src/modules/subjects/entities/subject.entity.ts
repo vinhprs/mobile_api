@@ -5,7 +5,7 @@ export class Subject {
   @PrimaryGeneratedColumn('increment')
   _id!: number;
 
-  @Column('varchar', { nullable: true, length: 255, name: 'subject_name' })
+  @Column('varchar', { nullable: false, length: 255, name: 'subject_name' })
   subjectName!: string;
 
   @Column('text', { nullable: true, name: 'include_courses', array: true })

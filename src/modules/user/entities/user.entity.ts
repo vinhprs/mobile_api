@@ -36,7 +36,10 @@ export class User {
   @Column('date', { nullable: true, name: 'birth_date' })
   birthDate?: Date;
 
-  @Column('text', { nullable: true, name: 'preferred_subjects', array: true })
+  @Column('int', { nullable: true, name: 'grade_id' })
+  grade?: number;
+
+  @Column('int', { nullable: true, name: 'preferred_subjects', array: true })
   subjects: number[];
 
   @Column('int', { nullable: true, name: 'subject_group_id' })

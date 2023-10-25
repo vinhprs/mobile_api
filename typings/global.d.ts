@@ -30,6 +30,7 @@ export declare global {
       JWT_PUBLIC: string;
       VERIFICATION_DOMAIN: string;
       VN_PROVINCE_DOMAIN: string;
+      AWS_BUCKET_NAME: string;
     }
   }
 
