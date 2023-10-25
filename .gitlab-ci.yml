@@ -6,6 +6,11 @@ variables:
   CREDENTIALS_PROD: "/home/ubuntu/credential/be/.env.production"
   SLEEP_WHEN_START_CONTAINER: 10
 
+image: docker:git
+
+services:
+    - docker:dind
+
 stages:
     - build
     - deploy
