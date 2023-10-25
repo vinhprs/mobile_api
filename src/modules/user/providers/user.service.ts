@@ -18,6 +18,7 @@ import { UpdateUserInput, UserOutputDto } from '../dto';
 import { User } from '../entities';
 import { RoleService } from './role.service';
 import { AddressService } from 'src/modules/address/address.service';
+import { CategoryService } from 'src/modules/category/category.service';
 
 @Injectable()
 export class UserService {
@@ -27,6 +28,7 @@ export class UserService {
     private config: ConfigService,
     private readonly roleService: RoleService,
     private readonly addressService: AddressService,
+    private readonly categoryService: CategoryService,
   ) {}
 
   public async getUserByEmail(email: string): Promise<UserOutputDto> {
@@ -167,7 +169,6 @@ export class UserService {
         },
         HttpStatus.BAD_REQUEST,
       );
-    console.log(code, user)
     if (code !== user.emailVerifyCode)
       throw new HttpException(
         {
@@ -230,7 +231,8 @@ export class UserService {
     id: string,
     data: UpdateUserInput,
   ): Promise<BaseApiResponse<UserOutputDto>> {
-    const { address } = data;
+    const { address, subjectNames, grade } = data;
+    let userAddr;
     const user = await this.getUserByUserId(id);
     if (!user)
       throw new HttpException(
@@ -241,8 +243,18 @@ export class UserService {
         },
         HttpStatus.BAD_REQUEST,
       );
+    const subCategories = await this.categoryService.getSubCategory(
+      subjectNames,
+      grade,
+    );
+    const preferSubjects = subCategories.reduce((accumulator, current) => {
+      const id = current._id;
+      return [...accumulator, id];
+    }, [] as number[]);
+    user.subjects = preferSubjects;
     this.userRepository.merge(user, data);
-    const userAddr = await this.addressService.createAddress(address);
+
+    if (address) userAddr = await this.addressService.createAddress(address);
     const updated = await this.userRepository.save({
       ...user,
       address: userAddr,

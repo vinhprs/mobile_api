@@ -1,0 +1,9 @@
+version: '3.9'
+services:
+  backendapi:
+    build:
+      context: .
+    image: vinhprs/prime-edu-backend
+    container_name: backend
+    ports:
+      - "4000:4000"

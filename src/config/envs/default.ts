@@ -15,5 +15,6 @@ export const config = {
     expiresIn: '30d',
     refreshExpiresIn: '7d',
   },
+  aws_bucket_name: process.env.AWS_BUCKET_NAME,
   grpcServerUrl: process.env.PORT_GRPC_URL,
 };

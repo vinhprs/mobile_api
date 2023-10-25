@@ -164,7 +164,7 @@ export class AuthService {
     user.emailVerifyCode = emailVerifyCode;
     this.sendForgotPassword(user);
     const result = plainToInstance(UserOutputDto, user, {
-      excludeExtraneousValues: true
+      excludeExtraneousValues: true,
     });
     return {
       error: false,
