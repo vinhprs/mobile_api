@@ -6,6 +6,11 @@ variables:
   CREDENTIALS_PROD: "/home/ubuntu/credential/be/.env.production"
   SLEEP_WHEN_START_CONTAINER: 10
 
+image: docker:git
+
+services:
+    - docker:dind
+
 stages:
     - build
     - deploy
@@ -14,7 +19,6 @@ before_script:
   - echo CI_BUILD_TOKEN
   - echo $CI_JOB_TOKEN
   - echo $CI_REGISTRY
-  - docker info
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   - echo $USER
 
@@ -24,11 +28,6 @@ PRIME-EDU-DEVELOPMENT-BUILD:
         EXPOSE_PORT: 4000
         STABLE_IMAGE_TAG: build-develop-latest
         IMAGE_NAME: $CONTAINER_IMAGE:$ARCHIVE_IMAGE_TAG
-    
-    image: docker:git
-
-    services:
-        - docker:dind
     stage: build
     tags: 
         - PRIME-EDU-BE-DEVELOP
