@@ -3,7 +3,7 @@ services:
   backendapi:
     build:
       context: .
-    image: vinhprs/prime-edu-backend
+    image: $IMAGE_NAME
     container_name: backend
     ports:
-      - "4000:4000"
+      - "$EXPOSE_PORT:4000"
