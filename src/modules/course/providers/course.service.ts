@@ -14,6 +14,7 @@ import { Course } from '../entities';
 import { SectionService } from './section.service';
 import { CategoryService } from '../../../modules/category/category.service';
 import { CategoryOutput } from 'src/modules/category/dto';
+import { PublicCourseInput } from '../dto/public-course-input.dto';
 
 @Injectable()
 export class CourseService {
@@ -25,6 +26,16 @@ export class CourseService {
     private readonly userService: UserService,
     private readonly categoryService: CategoryService,
   ) {}
+
+  async getCourseById(id: number): Promise<CourseOutput | null> {
+    const course = await this.courseRepository.findOne({
+      where: { _id: id },
+    });
+
+    return plainToInstance(CourseOutput, course, {
+      excludeExtraneousValues: true,
+    });
+  }
 
   async create(
     teacherId: string,
@@ -61,6 +72,33 @@ export class CourseService {
     };
   }
 
+  async publicCourse(data: PublicCourseInput): Promise<BaseApiResponse<null>> {
+    const { courseId, isPublic } = data;
+    const course = await this.getCourseById(courseId);
+    if (!course)
+      throw new HttpException(
+        {
+          error: true,
+          data: null,
+          message: MESSAGES.NOT_FOUND,
+          code: 404,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    await this.courseRepository.update(
+      { _id: courseId },
+      {
+        isPublic,
+      },
+    );
+    return {
+      error: false,
+      data: null,
+      message: MESSAGES.UPDATE_SUCCEED,
+      code: 200,
+    };
+  }
+
   async teacherGetCourse(
     teacherId: string,
     filter: TeacherFilterCourses,
@@ -69,7 +107,7 @@ export class CourseService {
     const queryBuilder = this.courseRepository.createQueryBuilder('course');
     queryBuilder.andWhere('course.teacherId = :teacherId', { teacherId });
     if (search)
-      queryBuilder.andWhere('course.courseName LIKE :courseName', {
+      queryBuilder.andWhere('UPPER(course.courseName) LIKE UPPER(:courseName)', {
         courseName: `%${search}%`,
       });
     if (page) queryBuilder.skip(limit * page - limit);
@@ -99,6 +137,7 @@ export class CourseService {
       data: {
         listData: result,
         total: count,
+        totalPage: Math.ceil(count / limit),
       },
       message: MESSAGES.GET_SUCCEED,
       code: 200,
@@ -158,7 +197,7 @@ export class CourseService {
     const instance = plainToInstance(CourseOutput, courses, {
       excludeExtraneousValues: true,
     });
-    
+
     // Get category info
     await Promise.all(
       instance.map(async (course) => {
@@ -178,6 +217,7 @@ export class CourseService {
       data: {
         listData: result,
         total: count,
+        totalPage: Math.ceil(count / limit),
       },
       message: MESSAGES.GET_SUCCEED,
       code: 200,

@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Query,
   UseInterceptors,
 } from '@nestjs/common';
@@ -18,6 +19,7 @@ import {
   FilterCourseDto,
   TeacherFilterCourses,
 } from '../dto/filter-course.dto';
+import { PublicCourseInput } from '../dto/public-course-input.dto';
 
 @Controller('')
 export class CourseController {
@@ -31,6 +33,15 @@ export class CourseController {
     @ReqUser() ctx: RequestContext,
   ): Promise<BaseApiResponse<CourseOutput>> {
     return this.courseService.create(ctx.user.id, data);
+  }
+
+  @Put('/teacher/public-course')
+  @Roles(ROLES.TEACHER)
+  @UseInterceptors(ClassSerializerInterceptor)
+  async publicCourse(
+    @Body() data: PublicCourseInput,
+  ): Promise<BaseApiResponse<null>> {
+    return this.courseService.publicCourse(data);
   }
 
   @Get('/teacher/my-course')

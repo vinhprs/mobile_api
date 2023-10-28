@@ -20,4 +20,7 @@ export class BasePaginationResponse<T> {
 
   @Expose()
   total: number;
+
+  @Expose()
+  totalPage: number;
 }

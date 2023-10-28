@@ -30,6 +30,9 @@ export class Course {
   @Column('varchar', { nullable: false, name: 'teacher_id' })
   teacherId: string;
 
+  @Column('boolean', { nullable: false, name: 'is_public', default: false })
+  isPublic!: boolean;
+
   @Column('timestamp', {
     nullable: false,
     default: () => 'CURRENT_TIMESTAMP',

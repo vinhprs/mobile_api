@@ -43,6 +43,9 @@ export class CourseOutput {
   categoryId: number;
 
   @Expose()
+  isPublic: boolean;
+
+  @Expose()
   @ApiProperty()
   sections: Section[];
 
