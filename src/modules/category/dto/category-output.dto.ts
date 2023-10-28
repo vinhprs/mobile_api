@@ -23,18 +23,4 @@ export class CategoryOutput {
   @ApiProperty()
   @Type(() => CategoryOutput)
   public category: CategoryOutput;
-
-  @Expose()
-  @ApiProperty()
-  public courses: number[];
-
-  @Expose()
-  @ApiProperty()
-  @Type(() => Date)
-  createdAt: Date;
-
-  @Expose()
-  @ApiProperty()
-  @Type(() => Date)
-  public updatedAt: Date;
 }

@@ -3,6 +3,7 @@ import {
   IsDate,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -35,6 +36,10 @@ export class CreateCourseDto {
   @IsNumber()
   @IsNotEmpty()
   subCategoryId: number;
+
+  @IsString()
+  @IsOptional()
+  thumbnail_url: string;
 
   @IsNotEmpty()
   @ValidateNested({ each: true })

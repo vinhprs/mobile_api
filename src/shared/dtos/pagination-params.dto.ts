@@ -10,7 +10,7 @@ export class PaginationParamsDto {
 
   @IsNumber()
   @IsOptional()
-  @Min(0)
+  @Min(1)
   @Transform(({ value }) => parseInt(value, 10), { toClassOnly: true })
-  skip = 0;
+  page = 1;
 }

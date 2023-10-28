@@ -14,6 +14,20 @@ export class CategoryService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
+  async getCategoryById(id: number, type: string): Promise<CategoryOutput> {
+    const builder = this.categoryRepository.createQueryBuilder('category');
+
+    if (type === 'category') {
+      builder.andWhere('category.category_id IS NULL');
+    } else {
+      builder.andWhere('category.category_id IS NOT NULL');
+    }
+    builder.andWhere('category._id = :id', { id });
+    const result = await builder.getOne();
+    return plainToInstance(CategoryOutput, result, {
+      excludeExtraneousValues: true,
+    });
+  }
   async getSubCategory(
     names: string[],
     parentId: number,

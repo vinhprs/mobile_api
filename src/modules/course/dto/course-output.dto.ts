@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { Section } from '../entities';
+import { CategoryOutput } from '../../../modules/category/dto';
 
 export class CourseOutput {
   @Expose()
@@ -10,6 +11,10 @@ export class CourseOutput {
   @Expose()
   @ApiProperty()
   courseName: string;
+
+  @Expose()
+  @ApiProperty()
+  thumbnail_url: string;
 
   @Expose()
   @ApiProperty()
@@ -25,11 +30,17 @@ export class CourseOutput {
 
   @Expose()
   @ApiProperty()
-  categoryId: number;
+  category: CategoryOutput;
 
   @Expose()
   @ApiProperty()
+  subCategory: CategoryOutput;
+
+  @Expose()
   subCategoryId: number;
+
+  @Expose()
+  categoryId: number;
 
   @Expose()
   @ApiProperty()

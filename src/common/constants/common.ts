@@ -19,6 +19,7 @@ export const MESSAGES = {
   PERMISSION_DENIED: 'permission_denied',
   UNAUTHORIZED: 'Xác thực thất bại!',
   INVALID_TOKEN: 'invalid_token',
+  UPLOAD_IMAGE_SUCCES: 'upload thành công',
   CANNOT_UPLOAD_IMAGE: 'cannot_upload_image',
   INVALID_QUERY: 'invalid_query',
   INVALID_PARAM: 'invalid_param',
