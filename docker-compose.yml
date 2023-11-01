@@ -11,7 +11,6 @@ services:
       - VIRTUAL_HOST=staging.primeedu.io.vn
       - VIRTUAL_PORT=4000
       - VIRTUAL_PATH=/api
-      - VIRTUAL_PROTO=https
     restart: always
   nginx:
     image: nginxproxy/nginx-proxy
