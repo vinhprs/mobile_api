@@ -7,6 +7,10 @@ services:
     container_name: prime-edu-be-develop
     ports:
       - "$EXPOSE_PORT:4000"
+    environment:
+      - VIRTUAL_HOST=staging.primeedu.io.vn/api
+      - VIRTUAL_PORT=4000
+      - VIRTUAL_PROTO=https
     restart: always
   nginx:
     image: nginxproxy/nginx-proxy
