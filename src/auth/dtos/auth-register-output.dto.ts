@@ -14,10 +14,6 @@ export class RegisterOutput {
   @Expose()
   @ApiProperty()
   username: string;
-  //
-  // @Expose()
-  // @ApiProperty()
-  // roles: Role;
 
   @Expose()
   @ApiProperty()
