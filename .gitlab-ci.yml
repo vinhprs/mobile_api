@@ -14,7 +14,6 @@ before_script:
   - echo CI_BUILD_TOKEN
   - echo $CI_JOB_TOKEN
   - echo $CI_REGISTRY
-  - sudo usermod -aG docker gitlab-runner
   - docker info
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   - echo $USER
