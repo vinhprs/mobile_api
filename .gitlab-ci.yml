@@ -34,7 +34,7 @@ PRIME-EDU-DEVELOPMENT-BUILD:
         - rm -rf .gitlab-ci.yml
         - rm -rf .gitattributes
 
-        - cp -r $CREDENTIALS_DEV .env
+        - sudo cp -r $CREDENTIALS_DEV .env
         - echo "Building the image $IMAGE_NAME ...."
         - docker compose build --force-rm
 
