@@ -7,8 +7,8 @@ services:
     container_name: prime-edu-be-develop
     ports:
       - "$EXPOSE_PORT:4000"
-
-  reverse-proxy:
+    restart: always
+  nginx:
     image: nginx:latest
     container_name: nginx
     volumes:
