@@ -9,7 +9,7 @@ services:
       - "$EXPOSE_PORT:4000"
     restart: always
   nginx:
-    image: nginx:latest
+    image: nginxproxy/nginx-proxy
     container_name: nginx
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
