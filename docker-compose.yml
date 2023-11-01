@@ -8,7 +8,7 @@ services:
     expose:
       - "4000"
     environment:
-      - VIRTUAL_HOST=staging.primeedu.io.vn/api
+      - VIRTUAL_HOST=staging.primeedu.io.vn
       - VIRTUAL_PORT=4000
     restart: always
   nginx:
