@@ -110,7 +110,7 @@ export class CourseService {
       queryBuilder.andWhere('UPPER(course.courseName) LIKE UPPER(:courseName)', {
         courseName: `%${search}%`,
       });
-    if (page) queryBuilder.skip(limit * page - limit);
+    if (page) queryBuilder.skip((page - 1) * limit);
     if (limit) queryBuilder.take(limit);
     const [courses, count] = await queryBuilder.getManyAndCount();
     const instance = plainToInstance(CourseOutput, courses, {
@@ -191,7 +191,7 @@ export class CourseService {
           endPrice: endPrice * 1000,
         },
       );
-    if (page) queryBuilder.skip(page * limit - page);
+    if (page) queryBuilder.skip((page - 1) * limit);
     if (limit) queryBuilder.take(limit);
     const [courses, count] = await queryBuilder.getManyAndCount();
     const instance = plainToInstance(CourseOutput, courses, {
