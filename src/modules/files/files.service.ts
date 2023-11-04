@@ -5,6 +5,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as AWS from 'aws-sdk'
 import { S3 } from 'aws-sdk';
 import { plainToInstance } from 'class-transformer';
 import { BaseApiResponse } from 'src/shared/dtos';
@@ -13,14 +14,12 @@ import { MESSAGES } from 'src/common/constants';
 @Injectable()
 export class FileService implements OnModuleInit {
   constructor(private readonly configService: ConfigService) {}
-
   s3: S3;
   onModuleInit() {
-    this.s3 = new S3({
-      region: this.configService.get('aws_region'),
-      accessKeyId: this.configService.get('aws_access_key_id'),
-      secretAccessKey: this.configService.get('aws_secrect_key')
-    });
+    AWS.config.region = this.configService.get('aws_region');
+    AWS.config.accessKeyId = this.configService.get('aws_access_key_id');
+    AWS.config.secretAccessKey = this.configService.get('aws_secrect_key');
+    this.s3 = new AWS.S3();
   }
   async uploadFile(
     identity: number | string,
