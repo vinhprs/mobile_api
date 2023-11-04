@@ -31,6 +31,9 @@ export declare global {
       VERIFICATION_DOMAIN: string;
       VN_PROVINCE_DOMAIN: string;
       AWS_BUCKET_NAME: string;
+      AWS_REGION: string;
+      AWS_ACCESS_KEY_ID: string;
+      AWS_SECRECT_KEY: string;
     }
   }
 

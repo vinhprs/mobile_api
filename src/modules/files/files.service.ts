@@ -12,12 +12,16 @@ import { UploadOutput } from './dto';
 import { MESSAGES } from 'src/common/constants';
 @Injectable()
 export class FileService implements OnModuleInit {
-  s3: S3;
-  onModuleInit() {
-    this.s3 = new S3();
-  }
   constructor(private readonly configService: ConfigService) {}
 
+  s3: S3;
+  onModuleInit() {
+    this.s3 = new S3({
+      region: this.configService.get('aws_region'),
+      accessKeyId: this.configService.get('aws_access_key_id'),
+      secretAccessKey: this.configService.get('aws_secrect_key')
+    });
+  }
   async uploadFile(
     identity: number | string,
     file: Express.Multer.File,

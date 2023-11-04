@@ -16,5 +16,8 @@ export const config = {
     refreshExpiresIn: '7d',
   },
   aws_bucket_name: process.env.AWS_BUCKET_NAME,
+  aws_access_key_id: process.env.AWS_ACCESS_KEY_ID,
+  aws_secrect_key: process.env.AWS_SECRECT_KEY,
+  aws_region: process.env.AWS_REGION,
   grpcServerUrl: process.env.PORT_GRPC_URL,
 };
