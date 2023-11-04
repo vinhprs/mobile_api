@@ -18,6 +18,9 @@ export class Exam {
   @Column('int', { nullable: false, name: 'time' })
   time!: number;
 
+  @Column('varchar', { nullable: false, name: 'teacher_id' })
+  teacherId: string;
+
   @Column('timestamp', {
     nullable: false,
     default: () => 'CURRENT_TIMESTAMP',

@@ -2,14 +2,17 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Get,
   Post,
-  UseInterceptors,
+  Query,
+  UseInterceptors
 } from '@nestjs/common';
-import { ExamService } from '../providers';
+import { BaseApiResponse, BasePaginationResponse } from 'src/shared/dtos';
+import { ReqUser, Roles } from '../../../common/decorators';
 import { ROLES } from '../../../shared/enums';
-import { CreateExamDto } from '../dto';
-import { BaseApiResponse } from 'src/shared/dtos';
-import { Roles } from '../../../common/decorators';
+import { RequestContext } from '../../../shared/request-context/request-context.dto';
+import { CreateExamDto, FilterExamDto, FilterExamOutput } from '../dto';
+import { ExamService } from '../providers';
 
 @Controller('')
 export class ExamController {
@@ -19,8 +22,20 @@ export class ExamController {
   @Roles(ROLES.TEACHER)
   @UseInterceptors(ClassSerializerInterceptor)
   async createExam(
+    @ReqUser() ctx: RequestContext,
     @Body() data: CreateExamDto,
   ): Promise<BaseApiResponse<null>> {
-    return this.examService.createExam(data);
+    return this.examService.createExam(ctx.user.id, data);
   }
+
+  @Get('/teacher/my-exam')
+  @Roles(ROLES.TEACHER)
+  @UseInterceptors(ClassSerializerInterceptor)
+  async teacherGetExam(
+    @ReqUser() ctx: RequestContext,
+    @Query() filter: FilterExamDto
+  ): Promise<BaseApiResponse<BasePaginationResponse<FilterExamOutput>>> {
+    return this.examService.teacherGetExam(ctx.user.id, filter);
+  }
+
 }

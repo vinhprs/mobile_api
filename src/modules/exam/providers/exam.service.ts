@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Exam } from '../entities';
 import { Repository } from 'typeorm';
-import { CreateExamDto } from '../dto';
-import { BaseApiResponse } from '../../../shared/dtos';
-import { QuestionService } from './question.service';
 import { MESSAGES } from '../../../common/constants';
+import { BaseApiResponse, BasePaginationResponse } from '../../../shared/dtos';
+import { CreateExamDto, FilterExamDto, FilterExamOutput } from '../dto';
+import { Exam } from '../entities';
+import { QuestionService } from './question.service';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class ExamService {
@@ -15,7 +16,10 @@ export class ExamService {
     private readonly questionService: QuestionService,
   ) {}
 
-  async createExam(data: CreateExamDto): Promise<BaseApiResponse<null>> {
+  async createExam(
+    teacherId: string,
+    data: CreateExamDto
+  ): Promise<BaseApiResponse<null>> {
     const { questions } = data;
     const exam = this.examRepository.create(data);
     const includeQuestions = this.questionService.createQuestions(questions);
@@ -23,6 +27,7 @@ export class ExamService {
     await this.examRepository.save({
       ...exam,
       questions: includeQuestions,
+      teacherId
     });
     return {
       error: false,
@@ -31,4 +36,34 @@ export class ExamService {
       code: 200,
     };
   }
+
+  async teacherGetExam(
+    teacherId: string,
+    filter: FilterExamDto
+  ): Promise<BaseApiResponse<BasePaginationResponse<FilterExamOutput>>> {
+    const { categoryId, subCategoryId, limit, page } = filter;
+    const builder = this.examRepository.createQueryBuilder('exam')
+    builder.andWhere('exam.teacherId = :teacherId', {teacherId});
+
+    if (page) builder.skip((page - 1) * limit);
+    if (limit) builder.take(limit);
+    if(categoryId) builder.andWhere('exam.categoryId = :categoryId', {categoryId});
+    if(subCategoryId) builder.andWhere('exam.subCategoryId = :subCategoryId', {subCategoryId});
+    const [exams, count] = await builder.getManyAndCount();
+    const result = plainToInstance(FilterExamOutput, exams, {
+      excludeExtraneousValues: true
+    })
+
+    return {
+      error: false,
+      data: {
+        listData: result,
+        total: count,
+        totalPage: Math.ceil(count / limit)
+      },
+      message: MESSAGES.GET_SUCCEED,
+      code: 200
+    }
+  }
+  
 }
