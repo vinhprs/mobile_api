@@ -27,14 +27,22 @@ export class CourseService {
     private readonly categoryService: CategoryService,
   ) {}
 
-  async getCourseById(id: number): Promise<CourseOutput | null> {
-    const course = await this.courseRepository.findOne({
-      where: { _id: id },
-    });
-
-    return plainToInstance(CourseOutput, course, {
+  async getCourseById(_id: number): Promise<BaseApiResponse<CourseOutput>> {
+    const course = await this.courseRepository
+      .createQueryBuilder('course')
+      .leftJoinAndSelect('course.sections', 'sections')
+      .leftJoinAndSelect('sections.lectures', 'lectures')
+      .andWhere('course._id = :_id', { _id })
+      .getOne();
+    const result = plainToInstance(CourseOutput, course, {
       excludeExtraneousValues: true,
     });
+    return {
+      error: false,
+      data: result,
+      message: MESSAGES.GET_SUCCEED,
+      code: 200,
+    };
   }
 
   async create(
@@ -74,7 +82,9 @@ export class CourseService {
 
   async publicCourse(data: PublicCourseInput): Promise<BaseApiResponse<null>> {
     const { courseId, isPublic } = data;
-    const course = await this.getCourseById(courseId);
+    const course = await this.courseRepository.findOne({
+      where: { _id: courseId },
+    });
     if (!course)
       throw new HttpException(
         {
@@ -107,9 +117,12 @@ export class CourseService {
     const queryBuilder = this.courseRepository.createQueryBuilder('course');
     queryBuilder.andWhere('course.teacherId = :teacherId', { teacherId });
     if (search)
-      queryBuilder.andWhere('UPPER(course.courseName) LIKE UPPER(:courseName)', {
-        courseName: `%${search}%`,
-      });
+      queryBuilder.andWhere(
+        'UPPER(course.courseName) LIKE UPPER(:courseName)',
+        {
+          courseName: `%${search}%`,
+        },
+      );
     if (page) queryBuilder.skip((page - 1) * limit);
     if (limit) queryBuilder.take(limit);
     const [courses, count] = await queryBuilder.getManyAndCount();

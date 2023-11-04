@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
-import { Section } from '../entities';
+import { Expose, Type } from 'class-transformer';
 import { CategoryOutput } from '../../../modules/category/dto';
+import { SectionOutput } from './section-output.dto';
 
 export class CourseOutput {
   @Expose()
@@ -46,8 +46,8 @@ export class CourseOutput {
   isPublic: boolean;
 
   @Expose()
-  @ApiProperty()
-  sections: Section[];
+  @Type(() => SectionOutput)
+  sections: SectionOutput[];
 
   @Expose()
   @ApiProperty()

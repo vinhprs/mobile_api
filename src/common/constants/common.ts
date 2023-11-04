@@ -4,7 +4,7 @@ export const FORWARDED_FOR_TOKEN_HEADER = 'x-forwarded-for';
 
 export const MESSAGES = {
   GET_SUCCEED: 'get_succeed',
-  CREATED_SUCCEED: 'created_model_succeed',
+  CREATED_SUCCEED: 'Tạo thành công!',
   DELETE_SUCCEED: 'delete_succeed',
   UPDATE_SUCCEED: 'update_succeed',
   UPDATE_OR_CREATE_SUCCEED: 'update_or_create_succeed',

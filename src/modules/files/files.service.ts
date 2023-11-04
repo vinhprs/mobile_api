@@ -5,7 +5,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as AWS from 'aws-sdk'
+import * as AWS from 'aws-sdk';
 import { S3 } from 'aws-sdk';
 import { plainToInstance } from 'class-transformer';
 import { BaseApiResponse } from 'src/shared/dtos';
@@ -25,7 +25,7 @@ export class FileService implements OnModuleInit {
     identity: number | string,
     file: Express.Multer.File,
   ): Promise<BaseApiResponse<UploadOutput>> {
-    console.log(this.configService.get('aws_secrect_key'))
+    console.log(this.configService.get('aws_secrect_key'));
     if (!file)
       throw new HttpException(
         {

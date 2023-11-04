@@ -19,6 +19,7 @@ import { AddressModule } from './modules/address/address.module';
 import { CategoryModule } from './modules/category/category.module';
 import { CourseModule } from './modules/course/course.module';
 import { FilesModule } from './modules/files/files.module';
+import { ExamModule } from './modules/exam/exam.module';
 
 @Module({
   imports: [
@@ -101,6 +102,10 @@ import { FilesModule } from './modules/files/files.module';
         module: CourseModule,
       },
       {
+        path: 'exam',
+        module: ExamModule,
+      },
+      {
         path: 'files',
         module: FilesModule,
       },
@@ -112,6 +117,7 @@ import { FilesModule } from './modules/files/files.module';
     CategoryModule,
     CourseModule,
     FilesModule,
+    ExamModule,
   ],
   providers: [
     // Global Guard, Authentication check on all routers

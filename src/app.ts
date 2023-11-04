@@ -23,7 +23,7 @@ async function bootstrap(): Promise<string> {
   middleware(app);
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector), new RolesGuard(reflector));
-  app.setGlobalPrefix('api/v1')
+  app.setGlobalPrefix('api/v1');
   await app.listen(process.env.PORT || 3000);
   return app.getUrl();
 }

@@ -3,23 +3,24 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  Param,
   Post,
   Put,
   Query,
   UseInterceptors,
 } from '@nestjs/common';
+import { BaseApiResponse, BasePaginationResponse } from 'src/shared/dtos';
 import { Public, ReqUser, Roles } from '../../../common';
 import { ROLES } from '../../../shared/enums';
-import { CreateCourseDto } from '../dto/create-course.dto';
-import { BaseApiResponse, BasePaginationResponse } from 'src/shared/dtos';
-import { CourseOutput } from '../dto';
-import { CourseService } from '../providers';
 import { RequestContext } from '../../../shared/request-context/request-context.dto';
+import { CourseOutput } from '../dto';
+import { CreateCourseDto } from '../dto/create-course.dto';
 import {
   FilterCourseDto,
   TeacherFilterCourses,
 } from '../dto/filter-course.dto';
 import { PublicCourseInput } from '../dto/public-course-input.dto';
+import { CourseService } from '../providers';
 
 @Controller('')
 export class CourseController {
@@ -61,5 +62,14 @@ export class CourseController {
     @Query() filter: FilterCourseDto,
   ): Promise<BaseApiResponse<BasePaginationResponse<CourseOutput>>> {
     return this.courseService.filterCourses(filter);
+  }
+
+  @Get('/:id')
+  @Public()
+  @UseInterceptors(ClassSerializerInterceptor)
+  async getCourseById(
+    @Param('id') id: number,
+  ): Promise<BaseApiResponse<CourseOutput>> {
+    return this.courseService.getCourseById(id);
   }
 }
