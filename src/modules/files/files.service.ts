@@ -25,6 +25,7 @@ export class FileService implements OnModuleInit {
     identity: number | string,
     file: Express.Multer.File,
   ): Promise<BaseApiResponse<UploadOutput>> {
+    console.log(this.configService.get('aws_secrect_key'))
     if (!file)
       throw new HttpException(
         {
