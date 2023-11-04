@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MESSAGES } from '../../../common/constants';
 import { BaseApiResponse, BasePaginationResponse } from '../../../shared/dtos';
-import { CreateExamDto, FilterExamDto, FilterExamOutput } from '../dto';
+import { CreateExamDto, FilterExamDto, FilterExamOutput, UpdateExamDto } from '../dto';
 import { Exam } from '../entities';
 import { QuestionService } from './question.service';
 import { plainToInstance } from 'class-transformer';
@@ -62,6 +62,36 @@ export class ExamService {
         totalPage: Math.ceil(count / limit)
       },
       message: MESSAGES.GET_SUCCEED,
+      code: 200
+    }
+  }
+
+  async updateExam(
+    _id: number,
+    data: UpdateExamDto
+  ): Promise<BaseApiResponse<null>> {
+    const { questions } = data;
+    const exam = await this.examRepository.findOne({where: {_id}});
+    if(!exam)
+      throw new HttpException(
+        {
+          error: true,
+          data: null,
+          message: MESSAGES.NOT_FOUND,
+          code: 404,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    this.examRepository.merge(exam, data);
+    if(questions) {
+      const updateQuestions = await this.questionService.updateQuestions(questions);
+      exam.questions = updateQuestions;
+    } 
+    await this.examRepository.save(exam);
+    return {
+      error: false,
+      data: null,
+      message: MESSAGES.UPDATE_SUCCEED,
       code: 200
     }
   }
