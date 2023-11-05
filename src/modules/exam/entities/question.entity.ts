@@ -6,7 +6,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Exam } from './exam.entity';
-import { QUESTION_LEVEL } from '../../../shared/enums/question-level.enum';
+import {
+  ANSWER_TYPE,
+  QUESTION_LEVEL,
+} from '../../../shared/enums/question-level.enum';
 
 @Entity()
 export class Question {
@@ -22,6 +25,14 @@ export class Question {
     name: 'question_level',
   })
   questionLevel: QUESTION_LEVEL;
+
+  @Column({
+    type: 'enum',
+    enum: ANSWER_TYPE,
+    name: 'answer_type',
+    default: ANSWER_TYPE.SINGLE,
+  })
+  answerType: ANSWER_TYPE;
 
   @Column('varchar', { nullable: false, name: 'answers', array: true })
   answers: string[];
@@ -46,7 +57,9 @@ export class Question {
   })
   updatedAt!: Date;
 
-  @ManyToOne(() => Exam, (exam) => exam.questions)
+  @ManyToOne(() => Exam, (exam) => exam.questions, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'exam_id' })
   exam: Exam;
 }

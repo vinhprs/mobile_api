@@ -20,21 +20,19 @@ export class QuestionService {
     return questions;
   }
 
-  async updateQuestions(
-    data: UpdateQuestionDto[]
-  ): Promise<Question[]> {
+  async updateQuestions(data: UpdateQuestionDto[]): Promise<Question[]> {
     const bulkQuestions: Question[] = [];
     await Promise.all(
       data.map(async (question) => {
         const exist = await this.questionRepository.findOne({
-          where: {_id: question.id},
-        })
-        if(exist) {
+          where: { _id: question.id },
+        });
+        if (exist) {
           this.questionRepository.merge(exist, question);
-          bulkQuestions.push(exist)
+          bulkQuestions.push(exist);
         }
-      })
-    )
+      }),
+    );
     return bulkQuestions;
   }
 }

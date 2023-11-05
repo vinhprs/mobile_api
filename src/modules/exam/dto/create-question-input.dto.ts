@@ -6,7 +6,10 @@ import {
   IsNumber,
   IsString,
 } from 'class-validator';
-import { QUESTION_LEVEL } from '../../../shared/enums/question-level.enum';
+import {
+  ANSWER_TYPE,
+  QUESTION_LEVEL,
+} from '../../../shared/enums/question-level.enum';
 
 export class CreateQuestionDto {
   @IsNotEmpty()
@@ -16,6 +19,10 @@ export class CreateQuestionDto {
   @IsNotEmpty()
   @IsEnum(QUESTION_LEVEL)
   questionLevel: QUESTION_LEVEL;
+
+  @IsNotEmpty()
+  @IsEnum(ANSWER_TYPE)
+  answerType: ANSWER_TYPE;
 
   @IsNotEmpty()
   @IsArray()

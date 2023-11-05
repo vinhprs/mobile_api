@@ -37,6 +37,7 @@ export class Exam {
 
   @OneToMany(() => Question, (question) => question.exam, {
     cascade: ['insert', 'update', 'remove'],
+    orphanedRowAction: 'delete',
   })
   questions: Question[];
 }

@@ -4,3 +4,8 @@ export enum QUESTION_LEVEL {
   HIGH = 'Vận dụng',
   EXTREME = 'Vận dụng cao',
 }
+
+export enum ANSWER_TYPE {
+  MULTI = 'Chọn nhiều',
+  SINGLE = 'Chọn 1',
+}
