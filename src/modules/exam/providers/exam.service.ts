@@ -8,18 +8,25 @@ import {
   ExamDetailOutput,
   FilterExamDto,
   FilterExamOutput,
+  TakeExamInput,
+  TakeExamOutput,
   UpdateExamDto,
 } from '../dto';
-import { Exam } from '../entities';
+import { Exam, UserExam } from '../entities';
 import { QuestionService } from './question.service';
 import { plainToInstance } from 'class-transformer';
+import { UserService } from '../../../modules/user/providers';
+import { correctionResult } from '../../../shared/utils/correction.util';
 
 @Injectable()
 export class ExamService {
   constructor(
     @InjectRepository(Exam)
     private readonly examRepository: Repository<Exam>,
+    @InjectRepository(UserExam)
+    private readonly userExamRepository: Repository<UserExam>,
     private readonly questionService: QuestionService,
+    private readonly userService: UserService
   ) {}
 
   async createExam(
@@ -158,5 +165,49 @@ export class ExamService {
       message: MESSAGES.DELETE_SUCCEED,
       code: 200,
     };
+  }
+
+  async studentTakeExam(
+    userId: string,
+    data: TakeExamInput
+  ): Promise<BaseApiResponse<TakeExamOutput>> {
+    const { completeTime ,examId, answers } = data;
+    const [user, exam, correction] = await Promise.all([
+      this.userService.getUserByUserId(userId),
+      this.examRepository.findOne({where: {_id: examId}, relations: ['questions']}),
+      this.questionService.answerCorrection(answers)
+    ]);
+    if(!user || !exam)
+      throw new HttpException(
+        {
+          error: true,
+          data: null,
+          message: MESSAGES.NOT_FOUND,
+          code: 404,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    const userExam = this.userExamRepository.create(data);
+    const examResult = correctionResult(exam, answers, correction);
+    
+    const { corrects, totalQuestions, score } = examResult;
+    await this.userExamRepository.save({
+      ...userExam,
+      user,
+      exam,
+      corrects,
+      totalQuestions,
+      score
+    });
+    const result = plainToInstance(TakeExamOutput, {
+      ...examResult,
+      completeTime
+    })
+    return {
+      error: false,
+      data: result,
+      message: MESSAGES.GET_SUCCEED,
+      code: 200
+    }
   }
 }

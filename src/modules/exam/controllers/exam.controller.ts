@@ -19,6 +19,9 @@ import {
   ExamDetailOutput,
   FilterExamDto,
   FilterExamOutput,
+  TakeExamInput,
+  TakeExamOutput,
+  // TakeExamOutput,
   UpdateExamDto,
 } from '../dto';
 import { ExamService } from '../providers';
@@ -74,5 +77,15 @@ export class ExamController {
     @ReqUser() ctx: RequestContext,
   ): Promise<BaseApiResponse<null>> {
     return this.examService.deleteExam(id, ctx.user.id);
+  }
+
+  @Post('/student/take-exam')
+  @Roles(ROLES.STUDENT)
+  @UseInterceptors(ClassSerializerInterceptor)
+  async takeExam(
+    @ReqUser() ctx: RequestContext,
+    @Body() data: TakeExamInput
+  ): Promise<BaseApiResponse<TakeExamOutput>> {
+    return this.examService.studentTakeExam(ctx.user.id, data);
   }
 }

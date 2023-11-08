@@ -1,14 +1,23 @@
 import { Repository } from 'typeorm';
 import { Question } from '../entities';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateQuestionDto } from '../dto';
+import { AnswerQuestionInput, CreateQuestionDto } from '../dto';
 import { UpdateQuestionDto } from '../dto/update-question-input.dto';
+import { QuestionCorrectionOutput } from '../dto/question-output.dto';
+import { instanceToPlain, plainToInstance } from 'class-transformer';
 
 export class QuestionService {
   constructor(
     @InjectRepository(Question)
     private readonly questionRepository: Repository<Question>,
   ) {}
+
+  async getQuestionById(
+    _id: number
+  ): Promise<Question | null> {
+    const result = await this.questionRepository.findOneBy({_id});
+    return result;
+  }
 
   createQuestions(data: CreateQuestionDto[]): Question[] {
     const questions: Question[] = [];
@@ -34,5 +43,29 @@ export class QuestionService {
       }),
     );
     return bulkQuestions;
+  }
+
+  async answerCorrection(
+    data: AnswerQuestionInput[]
+  ): Promise<QuestionCorrectionOutput[]> {
+    const output: QuestionCorrectionOutput[] = [];
+    await Promise.all(
+      data.map(async (current) => {
+        const { questionId, answer } = current;
+        const question = await this.getQuestionById(questionId);
+        if(question) {
+          const isCorrect = JSON.stringify(question.correctAnswers) === JSON.stringify(answer);
+          const instance = plainToInstance(QuestionCorrectionOutput, question, {
+            excludeExtraneousValues: true
+          });
+          instance.status = isCorrect;
+          instance.questionId = question._id;
+          instance.correctAnswers = question.correctAnswers;
+          const result = plainToInstance(QuestionCorrectionOutput, instanceToPlain(instance));
+          output.push(result);
+        }
+      })
+    ) 
+    return output;
   }
 }

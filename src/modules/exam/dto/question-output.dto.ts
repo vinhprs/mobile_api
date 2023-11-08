@@ -23,3 +23,17 @@ export class QuestionOuput {
   @Expose()
   explain: string;
 }
+
+export class QuestionCorrectionOutput {
+  @Expose()
+  questionId: number;
+
+  @Expose()
+  status: boolean;
+
+  @Expose()
+  correctAnswers: number[];
+
+  @Expose()
+  explain: string;
+}

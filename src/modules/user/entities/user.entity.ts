@@ -4,11 +4,13 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Role } from './';
 import { Address } from '../../../modules/address/entities';
+import { UserExam } from '../../../modules/exam/entities';
 
 @Entity({ name: 'user' })
 export class User {
@@ -89,4 +91,7 @@ export class User {
   })
   @JoinColumn({ name: 'address_id' })
   address: Address;
+
+  @OneToMany(() => UserExam, userExam => userExam.user)
+  exams: UserExam[];
 }

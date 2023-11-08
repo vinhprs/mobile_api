@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Question } from './question.entity';
+import { UserExam } from './user-exam.entity';
 
 @Entity()
 export class Exam {
@@ -40,4 +41,7 @@ export class Exam {
     orphanedRowAction: 'delete',
   })
   questions: Question[];
+
+  @OneToMany(() => UserExam, userExam => userExam.exam)
+  users: UserExam[];
 }
