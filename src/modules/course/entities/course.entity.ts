@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Section } from '.';
+import { Section } from './section.entity';
+import { CourseBookmark } from '../../../modules/course-bookmark/entities';
 
 @Entity()
 export class Course {
@@ -52,4 +53,10 @@ export class Course {
     cascade: ['insert', 'update', 'remove'],
   })
   sections: Section[];
+
+  @OneToMany(() => CourseBookmark, (bookmark) => bookmark.course, {
+    cascade: ['remove'],
+    orphanedRowAction: 'delete',
+  })
+  bookmarks: CourseBookmark[];
 }

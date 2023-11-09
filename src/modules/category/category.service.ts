@@ -6,6 +6,7 @@ import { MESSAGES } from '../../common/constants';
 import { BaseApiResponse } from '../../shared/dtos';
 import { CategoryOutput, CreateCategory } from './dto';
 import { Category } from './entities';
+import { FilterCategoryInput } from './dto/filter-category-input.dto';
 
 @Injectable()
 export class CategoryService {
@@ -14,20 +15,42 @@ export class CategoryService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
-  async getCategoryById(id: number, type: string): Promise<CategoryOutput> {
+  async getCategoryById(id: number): Promise<CategoryOutput> {
     const builder = this.categoryRepository.createQueryBuilder('category');
-
-    if (type === 'category') {
-      builder.andWhere('category.category_id IS NULL');
-    } else {
-      builder.andWhere('category.category_id IS NOT NULL');
-    }
     builder.andWhere('category._id = :id', { id });
     const result = await builder.getOne();
     return plainToInstance(CategoryOutput, result, {
       excludeExtraneousValues: true,
     });
   }
+
+  async filterCategory(
+    query: FilterCategoryInput,
+  ): Promise<BaseApiResponse<CategoryOutput>> {
+    const { categoryId, subCategoryId } = query;
+    const builder = this.categoryRepository.createQueryBuilder('category');
+    if (categoryId) {
+      builder.andWhere('category.category_id IS NULL');
+      builder.leftJoinAndSelect('category.childs', 'childs');
+      builder.addOrderBy('childs._id');
+      builder.andWhere('category._id = :_id', { _id: categoryId });
+    } else {
+      builder.andWhere('category.category_id IS NOT NULL');
+      builder.andWhere('category._id = :_id', { _id: subCategoryId });
+    }
+    builder.orderBy('category.categoryName');
+    const category = await builder.getOne();
+    const result = plainToInstance(CategoryOutput, category, {
+      excludeExtraneousValues: true,
+    });
+    return {
+      error: false,
+      data: result,
+      message: MESSAGES.GET_SUCCEED,
+      code: 200,
+    };
+  }
+
   async getSubCategory(
     names: string[],
     parentId: number,

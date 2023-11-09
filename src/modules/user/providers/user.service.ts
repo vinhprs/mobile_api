@@ -5,7 +5,6 @@ import * as bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
 import { LoginInput } from '../../../auth/dtos/auth-login-input.dto';
 import { MESSAGES } from '../../../common/constants/common';
-import { UpdateProfileDto } from '../../../modules/profile/dto/update-profile.dto';
 import { BaseApiResponse } from '../../../shared/dtos';
 import { ROLES } from '../../../shared/enums';
 import { Repository } from 'typeorm';
@@ -14,7 +13,7 @@ import {
   ResetPasswordInput,
   VerifyEmailInput,
 } from '../../../auth/dtos';
-import { UpdateUserInput, UserOutputDto } from '../dto';
+import { UpdateProfileDto, UpdateUserInput, UserOutputDto } from '../dto';
 import { User } from '../entities';
 import { RoleService } from './role.service';
 import { AddressService } from 'src/modules/address/address.service';

@@ -1,33 +1,32 @@
-import { Expose, Type } from "class-transformer";
-import { QuestionCorrectionOutput } from "./question-output.dto";
+import { Expose, Type } from 'class-transformer';
+import { QuestionCorrectionOutput } from './question-output.dto';
 
 export class TakeExamOutput {
-    @Expose()
-    totalQuestions: number;
+  @Expose()
+  totalQuestions: number;
 
-    @Expose()
-    corrects: number;
+  @Expose()
+  corrects: number;
 
-    @Expose()
-    incorrect: number;
+  @Expose()
+  incorrect: number;
 
-    @Expose()
-    selected: number;
+  @Expose()
+  selected: number;
 
-    @Expose()
-    unselected: number;
+  @Expose()
+  unselected: number;
 
-    @Expose()
-    score: number;
+  @Expose()
+  score: number;
 
-    @Expose()
-    time: number;
+  @Expose()
+  time: number;
 
-    @Expose()
-    completeTime: number;
+  @Expose()
+  completeTime: number;
 
-    @Expose()
-    @Type(() => QuestionCorrectionOutput)
-    corrections: QuestionCorrectionOutput[];
-
+  @Expose()
+  @Type(() => QuestionCorrectionOutput)
+  corrections: QuestionCorrectionOutput[];
 }

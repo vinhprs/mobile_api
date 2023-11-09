@@ -21,7 +21,6 @@ import {
   FilterExamOutput,
   TakeExamInput,
   TakeExamOutput,
-  // TakeExamOutput,
   UpdateExamDto,
 } from '../dto';
 import { ExamService } from '../providers';
@@ -84,7 +83,7 @@ export class ExamController {
   @UseInterceptors(ClassSerializerInterceptor)
   async takeExam(
     @ReqUser() ctx: RequestContext,
-    @Body() data: TakeExamInput
+    @Body() data: TakeExamInput,
   ): Promise<BaseApiResponse<TakeExamOutput>> {
     return this.examService.studentTakeExam(ctx.user.id, data);
   }

@@ -26,7 +26,7 @@ export class ExamService {
     @InjectRepository(UserExam)
     private readonly userExamRepository: Repository<UserExam>,
     private readonly questionService: QuestionService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
   ) {}
 
   async createExam(
@@ -169,15 +169,18 @@ export class ExamService {
 
   async studentTakeExam(
     userId: string,
-    data: TakeExamInput
+    data: TakeExamInput,
   ): Promise<BaseApiResponse<TakeExamOutput>> {
-    const { completeTime ,examId, answers } = data;
+    const { completeTime, examId, answers } = data;
     const [user, exam, correction] = await Promise.all([
       this.userService.getUserByUserId(userId),
-      this.examRepository.findOne({where: {_id: examId}, relations: ['questions']}),
-      this.questionService.answerCorrection(answers)
+      this.examRepository.findOne({
+        where: { _id: examId },
+        relations: ['questions'],
+      }),
+      this.questionService.answerCorrection(answers),
     ]);
-    if(!user || !exam)
+    if (!user || !exam)
       throw new HttpException(
         {
           error: true,
@@ -189,7 +192,7 @@ export class ExamService {
       );
     const userExam = this.userExamRepository.create(data);
     const examResult = correctionResult(exam, answers, correction);
-    
+
     const { corrects, totalQuestions, score } = examResult;
     await this.userExamRepository.save({
       ...userExam,
@@ -197,17 +200,17 @@ export class ExamService {
       exam,
       corrects,
       totalQuestions,
-      score
+      score,
     });
     const result = plainToInstance(TakeExamOutput, {
       ...examResult,
-      completeTime
-    })
+      completeTime,
+    });
     return {
       error: false,
       data: result,
       message: MESSAGES.GET_SUCCEED,
-      code: 200
-    }
+      code: 200,
+    };
   }
 }

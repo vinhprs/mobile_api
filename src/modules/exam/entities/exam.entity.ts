@@ -1,7 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Question } from './question.entity';
 import { UserExam } from './user-exam.entity';
-
 @Entity()
 export class Exam {
   @PrimaryGeneratedColumn('increment')
@@ -42,6 +41,6 @@ export class Exam {
   })
   questions: Question[];
 
-  @OneToMany(() => UserExam, userExam => userExam.exam)
+  @OneToMany(() => UserExam, (userExam) => userExam.exam)
   users: UserExam[];
 }

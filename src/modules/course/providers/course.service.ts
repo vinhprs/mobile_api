@@ -134,8 +134,8 @@ export class CourseService {
     await Promise.all(
       instance.map(async (course) => {
         const [category, subCategory] = await Promise.all([
-          this.categoryService.getCategoryById(course.categoryId, 'category'),
-          this.categoryService.getCategoryById(course.subCategoryId, 'sub'),
+          this.categoryService.getCategoryById(course.categoryId),
+          this.categoryService.getCategoryById(course.subCategoryId),
         ]);
         course.category = plainToInstance(CategoryOutput, category);
         course.subCategory = plainToInstance(CategoryOutput, subCategory);
@@ -215,8 +215,8 @@ export class CourseService {
     await Promise.all(
       instance.map(async (course) => {
         const [category, subCategory] = await Promise.all([
-          this.categoryService.getCategoryById(course.categoryId, 'category'),
-          this.categoryService.getCategoryById(course.subCategoryId, 'sub'),
+          this.categoryService.getCategoryById(course.categoryId),
+          this.categoryService.getCategoryById(course.subCategoryId),
         ]);
         course.category = plainToInstance(CategoryOutput, category);
         course.subCategory = plainToInstance(CategoryOutput, subCategory);

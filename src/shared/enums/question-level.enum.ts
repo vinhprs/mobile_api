@@ -11,6 +11,6 @@ export enum ANSWER_TYPE {
 }
 
 export enum ANSWER_STATUS {
-  CORRECT = "Đúng",
-  INCORRECT = "Sai"
+  CORRECT = 'Đúng',
+  INCORRECT = 'Sai',
 }

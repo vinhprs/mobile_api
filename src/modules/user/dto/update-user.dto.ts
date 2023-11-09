@@ -49,3 +49,5 @@ export class UpdateUserInput {
   @IsOptional()
   subjectGroup?: number;
 }
+
+export class UpdateProfileDto {}

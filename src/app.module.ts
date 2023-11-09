@@ -8,7 +8,6 @@ import { LoggerModule } from 'nestjs-pino';
 import { CommonModule, ExceptionsFilter } from './common';
 import { configuration, loggerOptions } from './config';
 import { UserModule } from './modules/user/user.module';
-import { ProfileModule } from './modules/profile/profile.module';
 import { AuthModule } from './auth';
 import { SharedModule } from './shared/share.module';
 import { MailerModule } from '@nestjs-modules/mailer';
@@ -20,6 +19,7 @@ import { CategoryModule } from './modules/category/category.module';
 import { CourseModule } from './modules/course/course.module';
 import { FilesModule } from './modules/files/files.module';
 import { ExamModule } from './modules/exam/exam.module';
+import { CourseBookmarkModule } from './modules/course-bookmark/course-bookmark.module';
 
 @Module({
   imports: [
@@ -111,13 +111,13 @@ import { ExamModule } from './modules/exam/exam.module';
       },
     ]),
     UserModule,
-    ProfileModule,
     SubjectsModule,
     AddressModule,
     CategoryModule,
     CourseModule,
     FilesModule,
     ExamModule,
+    CourseBookmarkModule,
   ],
   providers: [
     // Global Guard, Authentication check on all routers

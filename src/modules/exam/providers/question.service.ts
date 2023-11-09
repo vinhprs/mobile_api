@@ -12,10 +12,8 @@ export class QuestionService {
     private readonly questionRepository: Repository<Question>,
   ) {}
 
-  async getQuestionById(
-    _id: number
-  ): Promise<Question | null> {
-    const result = await this.questionRepository.findOneBy({_id});
+  async getQuestionById(_id: number): Promise<Question | null> {
+    const result = await this.questionRepository.findOneBy({ _id });
     return result;
   }
 
@@ -46,26 +44,30 @@ export class QuestionService {
   }
 
   async answerCorrection(
-    data: AnswerQuestionInput[]
+    data: AnswerQuestionInput[],
   ): Promise<QuestionCorrectionOutput[]> {
     const output: QuestionCorrectionOutput[] = [];
     await Promise.all(
       data.map(async (current) => {
         const { questionId, answer } = current;
         const question = await this.getQuestionById(questionId);
-        if(question) {
-          const isCorrect = JSON.stringify(question.correctAnswers) === JSON.stringify(answer);
+        if (question) {
+          const isCorrect =
+            JSON.stringify(question.correctAnswers) === JSON.stringify(answer);
           const instance = plainToInstance(QuestionCorrectionOutput, question, {
-            excludeExtraneousValues: true
+            excludeExtraneousValues: true,
           });
           instance.status = isCorrect;
           instance.questionId = question._id;
           instance.correctAnswers = question.correctAnswers;
-          const result = plainToInstance(QuestionCorrectionOutput, instanceToPlain(instance));
+          const result = plainToInstance(
+            QuestionCorrectionOutput,
+            instanceToPlain(instance),
+          );
           output.push(result);
         }
-      })
-    ) 
+      }),
+    );
     return output;
   }
 }

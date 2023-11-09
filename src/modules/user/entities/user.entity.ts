@@ -11,7 +11,7 @@ import {
 import { Role } from './';
 import { Address } from '../../../modules/address/entities';
 import { UserExam } from '../../../modules/exam/entities';
-
+import { CourseBookmark } from '../../../modules/course-bookmark/entities';
 @Entity({ name: 'user' })
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -92,6 +92,9 @@ export class User {
   @JoinColumn({ name: 'address_id' })
   address: Address;
 
-  @OneToMany(() => UserExam, userExam => userExam.user)
+  @OneToMany(() => UserExam, (userExam) => userExam.user)
   exams: UserExam[];
+
+  @OneToMany(() => CourseBookmark, (bookmark) => bookmark.user)
+  bookmarks: CourseBookmark[];
 }
