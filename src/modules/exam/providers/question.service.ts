@@ -58,7 +58,7 @@ export class QuestionService {
             excludeExtraneousValues: true,
           });
           instance.status = isCorrect;
-          instance.questionId = question._id;
+          instance.question = question;
           instance.correctAnswers = question.correctAnswers;
           const result = plainToInstance(
             QuestionCorrectionOutput,

@@ -102,6 +102,10 @@ import { CourseBookmarkModule } from './modules/course-bookmark/course-bookmark.
         module: CourseModule,
       },
       {
+        path: 'bookmark',
+        module: CourseBookmarkModule,
+      },
+      {
         path: 'exam',
         module: ExamModule,
       },

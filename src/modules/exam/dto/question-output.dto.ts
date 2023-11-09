@@ -1,4 +1,4 @@
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { ANSWER_TYPE, QUESTION_LEVEL } from '../../../shared/enums';
 
 export class QuestionOuput {
@@ -26,7 +26,8 @@ export class QuestionOuput {
 
 export class QuestionCorrectionOutput {
   @Expose()
-  questionId: number;
+  @Type(() => QuestionOuput)
+  question: QuestionOuput;
 
   @Expose()
   status: boolean;
