@@ -31,13 +31,21 @@ export class QuestionService {
     const bulkQuestions: Question[] = [];
     await Promise.all(
       data.map(async (question) => {
-        const exist = await this.questionRepository.findOne({
-          where: { _id: question.id },
-        });
-        if (exist) {
-          this.questionRepository.merge(exist, question);
-          bulkQuestions.push(exist);
+        if(question.id) {
+          const exist = await this.questionRepository.findOne({
+            where: { _id: question.id },
+          });
+          if (exist) {
+            this.questionRepository.merge(exist, question);
+            bulkQuestions.push(exist);
+          }
         }
+        else {
+          const newQuestion = this.questionRepository.create(question);
+          console.log(newQuestion)
+          bulkQuestions.push(newQuestion);
+        }
+        
       }),
     );
     return bulkQuestions;
