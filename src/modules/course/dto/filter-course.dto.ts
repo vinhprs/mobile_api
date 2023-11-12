@@ -27,6 +27,10 @@ export class FilterCourseDto extends PaginationParamsDto {
   @IsNumber()
   @IsOptional()
   endPrice?: number;
+
+  @IsString()
+  @IsOptional()
+  search?: string;
 }
 
 export class TeacherFilterCourses extends PaginationParamsDto {
