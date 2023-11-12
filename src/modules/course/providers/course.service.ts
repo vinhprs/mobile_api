@@ -168,6 +168,7 @@ export class CourseService {
       endPrice,
       page,
       limit,
+      search
     } = filter;
     const queryBuilder = this.courseRepository.createQueryBuilder('course');
     if (userId) {
@@ -190,6 +191,13 @@ export class CourseService {
         categoryId: grade,
       });
     }
+    if (search)
+      queryBuilder.andWhere(
+        'UPPER(course.courseName) LIKE UPPER(:courseName)',
+        {
+          courseName: `%${search}%`,
+        },
+      );
     if (categoryId)
       queryBuilder.andWhere('course.categoryId = :categoryId', { categoryId });
     if (subCategoryId)
