@@ -25,6 +25,9 @@ export class CourseOutput {
   price!: number;
 
   @Expose()
+  totalDuration: number;
+
+  @Expose()
   @ApiProperty()
   expiredDate: Date;
 

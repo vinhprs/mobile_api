@@ -5,6 +5,7 @@ export const FORWARDED_FOR_TOKEN_HEADER = 'x-forwarded-for';
 export const MESSAGES = {
   GET_SUCCEED: 'get_succeed',
   CREATED_SUCCEED: 'Tạo thành công!',
+  ADD_CART_SUCCEED: 'Thêm vào giỏ hàng thành công',
   DELETE_SUCCEED: 'Xóa thành công',
   UPDATE_SUCCEED: 'Cập nhật thành công',
   UPDATE_OR_CREATE_SUCCEED: 'update_or_create_succeed',

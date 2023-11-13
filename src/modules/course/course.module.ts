@@ -15,6 +15,6 @@ import { CategoryModule } from '../category/category.module';
   ],
   controllers: Object.values(controllers),
   providers: Object.values(providers),
-  exports: Object.values(providers)
+  exports: Object.values(providers),
 })
 export class CourseModule {}

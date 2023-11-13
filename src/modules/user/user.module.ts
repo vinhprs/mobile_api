@@ -4,7 +4,7 @@ import { UserController } from './user.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Permission, Role, User } from './entities';
 import { UserService } from './providers';
-import { CommonModule } from 'src/common';
+import { CommonModule } from '../../common';
 import { AddressModule } from '../address/address.module';
 import { CategoryModule } from '../category/category.module';
 

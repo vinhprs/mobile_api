@@ -31,7 +31,7 @@ export class QuestionService {
     const bulkQuestions: Question[] = [];
     await Promise.all(
       data.map(async (question) => {
-        if(question.id) {
+        if (question.id) {
           const exist = await this.questionRepository.findOne({
             where: { _id: question.id },
           });
@@ -39,13 +39,11 @@ export class QuestionService {
             this.questionRepository.merge(exist, question);
             bulkQuestions.push(exist);
           }
-        }
-        else {
+        } else {
           const newQuestion = this.questionRepository.create(question);
-          console.log(newQuestion)
+          console.log(newQuestion);
           bulkQuestions.push(newQuestion);
         }
-        
       }),
     );
     return bulkQuestions;

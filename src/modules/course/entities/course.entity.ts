@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Section } from './section.entity';
 import { CourseBookmark } from '../../../modules/course-bookmark/entities';
+import { Cart } from '../../../modules/cart/entities/cart.entity';
 
 @Entity()
 export class Course {
@@ -15,6 +16,9 @@ export class Course {
 
   @Column('int', { nullable: false, name: 'price' })
   price!: number;
+
+  @Column('decimal', { nullable: false, default: 0.0, name: 'total_duration', precision: 10, scale: 2 })
+  totalDuration!: number;
 
   @Column('text', { nullable: true, name: 'thumbnail_url' })
   thumbnail_url: string;
@@ -59,4 +63,10 @@ export class Course {
     orphanedRowAction: 'delete',
   })
   bookmarks: CourseBookmark[];
+
+  @OneToMany(() => Cart, (cart) => cart.course, {
+    cascade: ['insert', 'remove'],
+    orphanedRowAction: 'delete',
+  })
+  cart: Cart[];
 }

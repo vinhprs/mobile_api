@@ -6,7 +6,10 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { ANSWER_TYPE, QUESTION_LEVEL } from '../../../shared/enums/question-level.enum';
+import {
+  ANSWER_TYPE,
+  QUESTION_LEVEL,
+} from '../../../shared/enums/question-level.enum';
 
 export class UpdateQuestionDto {
   @IsNumber()
