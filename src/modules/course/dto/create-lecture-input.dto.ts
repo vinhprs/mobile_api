@@ -6,6 +6,7 @@ import {
   IsString,
 } from 'class-validator';
 import { LECTURE_TYPE } from '../../../shared/enums';
+import { Type } from 'class-transformer';
 
 export class CreateLecture {
   @IsNotEmpty()
@@ -16,6 +17,7 @@ export class CreateLecture {
   @IsEnum(LECTURE_TYPE)
   lectureType: LECTURE_TYPE;
 
+  @Type(() => Number)
   @IsNumber()
   @IsOptional()
   duration: number;

@@ -13,13 +13,18 @@ export class SectionService {
     private readonly lectureService: LectureService,
   ) {}
 
-  create(data: CreateSection[]): Section[] {
+  create(data: CreateSection[]): [Section[], number] {
     const sections: Section[] = [];
+    let totalDuration = 0;
     data.map((section) => {
       const createSection = this.sectionRepository.create(section);
       createSection.lectures = this.lectureService.create(section.lectures);
+      totalDuration += section.lectures.reduce((total, current) => {
+        const duration = current.duration;
+        return total + duration;
+      }, 0)
       sections.push(createSection);
     });
-    return sections;
+    return [sections, totalDuration];
   }
 }

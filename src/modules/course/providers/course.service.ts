@@ -62,11 +62,12 @@ export class CourseService {
       );
     const { sections } = data;
     const course = this.courseRepository.create(data);
-    const includeSections = this.sectionService.create(sections);
+    const [includeSections, totalDuration] = this.sectionService.create(sections);
     const createCourse = await this.courseRepository.save({
       ...course,
       sections: includeSections,
       teacherId,
+      totalDuration
     });
     const result = plainToInstance(CourseOutput, createCourse, {
       excludeExtraneousValues: true,
