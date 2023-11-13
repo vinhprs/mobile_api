@@ -28,6 +28,16 @@ export class FilterCourseDto extends PaginationParamsDto {
   @IsOptional()
   endPrice?: number;
 
+  @Type(() => Number)
+  @IsNumber()
+  @IsOptional()
+  startDuration?: number;
+
+  @Type(() => Number)
+  @IsNumber()
+  @IsOptional()
+  endDuration?: number;
+
   @IsString()
   @IsOptional()
   search?: string;

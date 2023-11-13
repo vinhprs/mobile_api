@@ -168,7 +168,9 @@ export class CourseService {
       endPrice,
       page,
       limit,
-      search
+      search,
+      startDuration,
+      endDuration
     } = filter;
     const queryBuilder = this.courseRepository.createQueryBuilder('course');
     if (userId) {
@@ -210,6 +212,14 @@ export class CourseService {
         {
           startPrice: startPrice * 1000,
           endPrice: endPrice * 1000,
+        },
+      );
+    if (startDuration && endDuration)
+      queryBuilder.andWhere(
+        'course.total_duration >= :startDuration AND course.total_duration <= :endDuration',
+        {
+          startDuration: startDuration * 60,
+          endDuration: endDuration * 60,
         },
       );
     if (page) queryBuilder.skip((page - 1) * limit);
