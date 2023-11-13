@@ -34,6 +34,13 @@ export declare global {
       AWS_REGION: string;
       AWS_ACCESS_KEY_ID: string;
       AWS_SECRECT_KEY: string;
+      VNP_TMNCODE: string;
+      VNP_COMMAND: string;
+      VNP_LOCALE: string;
+      VNP_VERSION: string;
+      VNP_HASH_SECRECT: string;
+      VNP_URL: string;
+      VNP_RETURN_URL: string;
     }
   }
 

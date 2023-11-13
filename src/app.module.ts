@@ -20,6 +20,8 @@ import { CourseModule } from './modules/course/course.module';
 import { FilesModule } from './modules/files/files.module';
 import { ExamModule } from './modules/exam/exam.module';
 import { CourseBookmarkModule } from './modules/course-bookmark/course-bookmark.module';
+import { CartModule } from './modules/cart/cart.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -102,6 +104,14 @@ import { CourseBookmarkModule } from './modules/course-bookmark/course-bookmark.
         module: CourseModule,
       },
       {
+        path: 'cart',
+        module: CartModule,
+      },
+      {
+        path: 'payment',
+        module: PaymentModule,
+      },
+      {
         path: 'bookmark',
         module: CourseBookmarkModule,
       },
@@ -122,6 +132,8 @@ import { CourseBookmarkModule } from './modules/course-bookmark/course-bookmark.
     FilesModule,
     ExamModule,
     CourseBookmarkModule,
+    CartModule,
+    PaymentModule,
   ],
   providers: [
     // Global Guard, Authentication check on all routers

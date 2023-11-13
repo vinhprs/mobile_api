@@ -12,6 +12,7 @@ import { Role } from './';
 import { Address } from '../../../modules/address/entities';
 import { UserExam } from '../../../modules/exam/entities';
 import { CourseBookmark } from '../../../modules/course-bookmark/entities';
+import { Cart } from '../../../modules/cart/entities/cart.entity';
 @Entity({ name: 'user' })
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -97,4 +98,7 @@ export class User {
 
   @OneToMany(() => CourseBookmark, (bookmark) => bookmark.user)
   bookmarks: CourseBookmark[];
+
+  @OneToMany(() => Cart, (cart) => cart.user)
+  cart: Cart[];
 }

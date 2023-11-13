@@ -10,7 +10,7 @@ import { CourseModule } from '../course/course.module';
   imports: [
     TypeOrmModule.forFeature([CourseBookmark]),
     UserModule,
-    CourseModule
+    CourseModule,
   ],
   controllers: [CourseBookmarkController],
   providers: [CourseBookmarkService],

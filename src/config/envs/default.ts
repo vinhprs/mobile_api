@@ -20,4 +20,11 @@ export const config = {
   aws_secrect_key: process.env.AWS_SECRECT_KEY,
   aws_region: process.env.AWS_REGION,
   grpcServerUrl: process.env.PORT_GRPC_URL,
+  vnp_tmncode: process.env.VNP_TMNCODE,
+  vnp_command: process.env.VNP_COMMAND,
+  vnp_locale: process.env.VNP_LOCALE,
+  vnp_version: process.env.VNP_VERSION,
+  vnp_hash_secrect: process.env.VNP_HASH_SECRECT,
+  vnp_url: process.env.VNP_URL,
+  vnp_return_url: process.env.VNP_RETURN_URL
 };
