@@ -12,7 +12,7 @@ export const config = {
   jwt: {
     publicKey: Buffer.from(process.env.JWT_PUBLIC, 'base64').toString('utf-8'),
     privateKey: Buffer.from(process.env.JWT_SECRET, 'base64').toString('utf-8'),
-    expiresIn: '30d',
+    expiresIn: '15m',
     refreshExpiresIn: '7d',
   },
   aws_bucket_name: process.env.AWS_BUCKET_NAME,

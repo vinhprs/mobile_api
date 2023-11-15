@@ -25,7 +25,7 @@ export class CartController {
     return this.cartService.addToCart(ctx.user.id, data);
   }
 
-  @Get('/me')
+  @Get('/my-cart')
   @UseInterceptors(ClassSerializerInterceptor)
   async getMyCart(
     @ReqUser() ctx: RequestContext
