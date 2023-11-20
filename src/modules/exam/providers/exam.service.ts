@@ -172,13 +172,12 @@ export class ExamService {
     data: TakeExamInput,
   ): Promise<BaseApiResponse<TakeExamOutput>> {
     const { completeTime, examId, answers } = data;
-    const [user, exam, correction] = await Promise.all([
+    const [user, exam] = await Promise.all([
       this.userService.getUserByUserId(userId),
       this.examRepository.findOne({
         where: { _id: examId },
         relations: ['questions'],
       }),
-      this.questionService.answerCorrection(answers),
     ]);
     if (!user || !exam)
       throw new HttpException(
@@ -190,6 +189,10 @@ export class ExamService {
         },
         HttpStatus.NOT_FOUND,
       );
+    const correction = await this.questionService.answerCorrection(
+      exam,
+      answers,
+    );
     const userExam = this.userExamRepository.create(data);
     const examResult = correctionResult(exam, answers, correction);
 
@@ -209,7 +212,7 @@ export class ExamService {
     return {
       error: false,
       data: result,
-      message: MESSAGES.GET_SUCCEED,
+      message: MESSAGES.FINISH_EXAM,
       code: 200,
     };
   }

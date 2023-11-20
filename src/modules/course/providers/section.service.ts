@@ -22,7 +22,7 @@ export class SectionService {
       totalDuration += section.lectures.reduce((total, current) => {
         const duration = current.duration;
         return total + duration;
-      }, 0)
+      }, 0);
       sections.push(createSection);
     });
     return [sections, totalDuration];

@@ -3,6 +3,9 @@ import { QuestionCorrectionOutput } from './question-output.dto';
 
 export class TakeExamOutput {
   @Expose()
+  title: string;
+
+  @Expose()
   totalQuestions: number;
 
   @Expose()

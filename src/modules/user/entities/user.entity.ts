@@ -13,6 +13,7 @@ import { Address } from '../../../modules/address/entities';
 import { UserExam } from '../../../modules/exam/entities';
 import { CourseBookmark } from '../../../modules/course-bookmark/entities';
 import { Cart } from '../../../modules/cart/entities/cart.entity';
+import { Order } from '../../../modules/order/entities/order.entity';
 @Entity({ name: 'user' })
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -101,4 +102,7 @@ export class User {
 
   @OneToMany(() => Cart, (cart) => cart.user)
   cart: Cart[];
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
 }

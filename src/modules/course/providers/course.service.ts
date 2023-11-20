@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  forwardRef,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
@@ -15,6 +21,7 @@ import { SectionService } from './section.service';
 import { CategoryService } from '../../../modules/category/category.service';
 import { CategoryOutput } from 'src/modules/category/dto';
 import { PublicCourseInput } from '../dto/public-course-input.dto';
+import { CartService } from '../../../modules/cart/cart.service';
 
 @Injectable()
 export class CourseService {
@@ -25,6 +32,8 @@ export class CourseService {
     private readonly sectionService: SectionService,
     private readonly userService: UserService,
     private readonly categoryService: CategoryService,
+    @Inject(forwardRef(() => CartService))
+    private readonly cartService: CartService,
   ) {}
 
   async getCourseById(_id: number): Promise<BaseApiResponse<CourseOutput>> {
@@ -62,12 +71,13 @@ export class CourseService {
       );
     const { sections } = data;
     const course = this.courseRepository.create(data);
-    const [includeSections, totalDuration] = this.sectionService.create(sections);
+    const [includeSections, totalDuration] =
+      this.sectionService.create(sections);
     const createCourse = await this.courseRepository.save({
       ...course,
       sections: includeSections,
       teacherId,
-      totalDuration
+      totalDuration,
     });
     const result = plainToInstance(CourseOutput, createCourse, {
       excludeExtraneousValues: true,
@@ -162,7 +172,6 @@ export class CourseService {
     filter: FilterCourseDto,
   ): Promise<BaseApiResponse<BasePaginationResponse<CourseOutput>>> {
     const {
-      userId,
       categoryId,
       subCategoryId,
       startPrice,
@@ -171,29 +180,11 @@ export class CourseService {
       limit,
       search,
       startDuration,
-      endDuration
+      endDuration,
+      userId,
     } = filter;
     const queryBuilder = this.courseRepository.createQueryBuilder('course');
-    if (userId) {
-      const user = await this.userService.getUserByUserId(userId);
-      if (!user)
-        throw new HttpException(
-          {
-            error: true,
-            data: null,
-            message: MESSAGES.NOT_FOUND_USER,
-            code: 404,
-          },
-          HttpStatus.NOT_FOUND,
-        );
-      const { subjects, grade } = user;
-      queryBuilder.andWhere('course.subCategoryId IN (:...subCategoryId)', {
-        subCategoryId: subjects,
-      });
-      queryBuilder.andWhere('course.categoryId = :categoryId', {
-        categoryId: grade,
-      });
-    }
+    queryBuilder.andWhere('course.isPublic = TRUE');
     if (search)
       queryBuilder.andWhere(
         'UPPER(course.courseName) LIKE UPPER(:courseName)',
@@ -226,10 +217,7 @@ export class CourseService {
     if (page) queryBuilder.skip((page - 1) * limit);
     if (limit) queryBuilder.take(limit);
     const [courses, count] = await queryBuilder.getManyAndCount();
-    const instance = plainToInstance(CourseOutput, courses, {
-      excludeExtraneousValues: true,
-    });
-
+    const instance = plainToInstance(CourseOutput, courses);
     // Get category info
     await Promise.all(
       instance.map(async (course) => {
@@ -239,6 +227,13 @@ export class CourseService {
         ]);
         course.category = plainToInstance(CategoryOutput, category);
         course.subCategory = plainToInstance(CategoryOutput, subCategory);
+        if (userId) {
+          const paidCart = await this.cartService.getPaidCart(
+            userId,
+            course._id,
+          );
+          course.isPaid = paidCart.data?.status || false;
+        }
       }),
     );
     const result = plainToInstance(CourseOutput, instance, {
