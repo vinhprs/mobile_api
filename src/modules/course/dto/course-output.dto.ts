@@ -46,12 +46,15 @@ export class CourseOutput {
   @Expose()
   categoryId: number;
 
-  @Expose()
   isPublic: boolean;
 
   @Expose()
   @Transform((value) => value.value || false, { toClassOnly: true })
   isPaid: boolean;
+
+  @Expose()
+  @Transform((value) => value.value || false, { toClassOnly: true })
+  isAddToCart: boolean;
 
   @Type(() => CartOutput)
   carts: CartOutput[];
