@@ -53,7 +53,6 @@ export class CartService {
       .createQueryBuilder('cart')
       .andWhere('cart.course_id = :course_id', { course_id: courseId })
       .andWhere('cart.user_id = :user_id', { user_id: userId })
-      .andWhere('cart.status = TRUE')
       .getOne();
 
     const result = plainToInstance(CartOutput, cart, {

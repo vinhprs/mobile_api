@@ -232,7 +232,8 @@ export class CourseService {
             userId,
             course._id,
           );
-          course.isPaid = paidCart.data?.status || false;
+          course.isPaid = paidCart?.data?.status || false;
+          course.isAddToCart = paidCart?.data ? true : false;
         }
       }),
     );
