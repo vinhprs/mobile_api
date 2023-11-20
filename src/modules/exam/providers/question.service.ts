@@ -1,7 +1,11 @@
 import { Repository } from 'typeorm';
 import { Question } from '../entities';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AnswerQuestionInput, CreateQuestionDto } from '../dto';
+import {
+  AnswerQuestionInput,
+  CreateQuestionDto,
+  ExamDetailOutput,
+} from '../dto';
 import { UpdateQuestionDto } from '../dto/update-question-input.dto';
 import { QuestionCorrectionOutput } from '../dto/question-output.dto';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
@@ -50,30 +54,54 @@ export class QuestionService {
   }
 
   async answerCorrection(
+    exam: ExamDetailOutput,
     data: AnswerQuestionInput[],
   ): Promise<QuestionCorrectionOutput[]> {
     const output: QuestionCorrectionOutput[] = [];
-    await Promise.all(
-      data.map(async (current) => {
-        const { questionId, answer } = current;
-        const question = await this.getQuestionById(questionId);
-        if (question) {
-          const isCorrect =
-            JSON.stringify(question.correctAnswers) === JSON.stringify(answer);
-          const instance = plainToInstance(QuestionCorrectionOutput, question, {
-            excludeExtraneousValues: true,
-          });
-          instance.status = isCorrect;
-          instance.question = question;
-          instance.correctAnswers = question.correctAnswers;
-          const result = plainToInstance(
-            QuestionCorrectionOutput,
-            instanceToPlain(instance),
-          );
-          output.push(result);
-        }
-      }),
-    );
+    const questions = exam.questions;
+    const selected = data.filter((e) => e.questionId !== 0);
+    selected.map((ans) => {
+      const { questionId, answer } = ans;
+      const question = questions.find((e) => e._id === questionId);
+      if (question) {
+        const isCorrect =
+          JSON.stringify(question.correctAnswers) === JSON.stringify(answer);
+
+        const instance = plainToInstance(QuestionCorrectionOutput, question, {
+          excludeExtraneousValues: true,
+        });
+        const result = plainToInstance(
+          QuestionCorrectionOutput,
+          instanceToPlain({
+            ...instance,
+            status: isCorrect,
+            question,
+            studentAnswer: answer
+          }),
+        );
+        output.push(result);
+        // remove the selected after correction
+        const index = questions.findIndex(q => q._id === question._id);
+        questions.splice(index, 1);
+      }
+    });
+    // unselected
+    questions.map((unselect) => {
+      const instance = plainToInstance(QuestionCorrectionOutput, unselect, {
+        excludeExtraneousValues: true,
+      });
+      instance.status = false;
+      instance.question = unselect;
+      const result = plainToInstance(
+        QuestionCorrectionOutput,
+        instanceToPlain({
+          ...instance,
+          status: false,
+          question: unselect
+        }),
+      );
+      output.push(result);
+    })
     return output;
   }
 }

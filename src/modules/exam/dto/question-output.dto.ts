@@ -26,14 +26,14 @@ export class QuestionOuput {
 
 export class QuestionCorrectionOutput {
   @Expose()
+  studentAnswer: number[];
+
+  @Expose()
   @Type(() => QuestionOuput)
   question: QuestionOuput;
 
   @Expose()
   status: boolean;
-
-  @Expose()
-  correctAnswers: number[];
 
   @Expose()
   explain: string;

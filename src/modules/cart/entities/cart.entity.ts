@@ -1,3 +1,4 @@
+import { OrderDetail } from '../../order/dto/order-detail.entity';
 import { Course } from '../../../modules/course/entities';
 import { User } from '../../../modules/user/entities';
 import {
@@ -5,6 +6,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -18,7 +20,7 @@ export class Cart {
     name: 'discount',
     precision: 10,
     scale: 2,
-    default: 0.0
+    default: 0.0,
   })
   discount: number;
 
@@ -46,4 +48,7 @@ export class Cart {
   @ManyToOne(() => Course, (course) => course.cart)
   @JoinColumn({ name: 'course_id' })
   course: Course;
+
+  @OneToMany(() => OrderDetail, (detail) => detail.cart)
+  orderDetails: OrderDetail[];
 }

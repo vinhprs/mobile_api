@@ -17,7 +17,13 @@ export class Course {
   @Column('int', { nullable: false, name: 'price' })
   price!: number;
 
-  @Column('decimal', { nullable: false, default: 0.0, name: 'total_duration', precision: 10, scale: 2 })
+  @Column('decimal', {
+    nullable: false,
+    default: 0.0,
+    name: 'total_duration',
+    precision: 10,
+    scale: 2,
+  })
   totalDuration!: number;
 
   @Column('text', { nullable: true, name: 'thumbnail_url' })

@@ -22,6 +22,7 @@ import { ExamModule } from './modules/exam/exam.module';
 import { CourseBookmarkModule } from './modules/course-bookmark/course-bookmark.module';
 import { CartModule } from './modules/cart/cart.module';
 import { PaymentModule } from './payment/payment.module';
+import { OrderModule } from './modules/order/order.module';
 
 @Module({
   imports: [
@@ -134,6 +135,7 @@ import { PaymentModule } from './payment/payment.module';
     CourseBookmarkModule,
     CartModule,
     PaymentModule,
+    OrderModule,
   ],
   providers: [
     // Global Guard, Authentication check on all routers

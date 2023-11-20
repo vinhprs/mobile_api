@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { CategoryOutput } from '../../../modules/category/dto';
 import { SectionOutput } from './section-output.dto';
+import { CartOutput } from '../../../modules/cart/dto/cart-output.dto';
 
 export class CourseOutput {
   @Expose()
@@ -47,6 +48,13 @@ export class CourseOutput {
 
   @Expose()
   isPublic: boolean;
+
+  @Expose()
+  @Transform((value) => value.value || false, { toClassOnly: true })
+  isPaid: boolean;
+
+  @Type(() => CartOutput)
+  carts: CartOutput[];
 
   @Expose()
   @Type(() => SectionOutput)

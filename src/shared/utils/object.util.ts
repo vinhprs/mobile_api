@@ -7,17 +7,17 @@ export const deleteKey = (obj: any) => {
 };
 
 export const sortObject = (obj: any): any => {
-  let sorted: Record<string,string> = {};
-	let str: string[] = [];
-	let key: number | string ;
-	for (key in obj) {
-		if (obj.hasOwnProperty(key)) {
-		  str.push(encodeURIComponent(key));
-		}
-	}
-	str.sort();
-    for (key = 0; key < str.length; key++) {
-        sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
+  const sorted: Record<string, string> = {};
+  const str: string[] = [];
+  let key: number | string;
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      str.push(encodeURIComponent(key));
     }
+  }
+  str.sort();
+  for (key = 0; key < str.length; key++) {
+    sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, '+');
+  }
   return sorted;
-}
+};

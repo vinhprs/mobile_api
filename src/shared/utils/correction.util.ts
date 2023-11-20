@@ -11,10 +11,11 @@ export const correctionResult = (
   answer: AnswerQuestionInput[],
   correction: QuestionCorrectionOutput[],
 ): DeepPartial<TakeExamOutput> => {
-  const total = exam.questions.length;
-  const selected = answer.length;
+  const total = answer.length;
+  const selected = answer.filter((a) => a.questionId !== 0).length;
   const numberCorrect = correction.filter((e) => e.status === true).length;
   const grade: DeepPartial<TakeExamOutput> = {
+    title: exam.title,
     totalQuestions: total,
     corrects: numberCorrect,
     incorrect: selected - numberCorrect,

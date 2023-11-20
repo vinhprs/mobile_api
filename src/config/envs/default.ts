@@ -26,5 +26,5 @@ export const config = {
   vnp_version: process.env.VNP_VERSION,
   vnp_hash_secrect: process.env.VNP_HASH_SECRECT,
   vnp_url: process.env.VNP_URL,
-  vnp_return_url: process.env.VNP_RETURN_URL
+  vnp_return_url: process.env.VNP_RETURN_URL,
 };

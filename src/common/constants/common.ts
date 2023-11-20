@@ -36,6 +36,14 @@ export const MESSAGES = {
   RESEND_SUCCESS: 'Gửi lại mã xác thực thành công',
   SENT_EMAIL_TO_RECOVER_PASSWORD: 'Đã gửi mail để khôi phục mật khẩu',
   USERNAME_EXISTS: 'Username đã tồn tại',
+  FINISH_EXAM: 'Nộp bài thành công',
+};
+
+export const VNPAY_MESSAGE = {
+  FAIL_CHECKSUM: 'Không xác thực được',
+  WRONG_ORDER: 'Sai thông tin đơn hàng',
+  TRANSACTION_FAIL: 'Giao dịch thất bại',
+  PAYMENT_SUCCESS: 'Thanh toán thành công',
 };
 
 export const MAIL_TEMPLATE = {
