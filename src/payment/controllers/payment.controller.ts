@@ -5,7 +5,6 @@ import {
   Get,
   Post,
   Query,
-  Redirect,
   UseInterceptors,
 } from '@nestjs/common';
 import { PaymentService } from '../providers/payment.service';
@@ -13,20 +12,19 @@ import { Public, ReqUser } from '../../common';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
 import { CheckoutCartDto } from '../dto';
 import { VnpayPaymentUrlDto } from '../dto/vnpay-payload.dto';
+import { BaseApiResponse } from 'src/shared/dtos';
 
 @Controller('')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
   @Post('/checkout')
-  @Redirect()
   @UseInterceptors(ClassSerializerInterceptor)
   async checkout(
     @ReqUser() ctx: RequestContext,
     @Body() data: CheckoutCartDto,
-  ): Promise<any> {
-    const url = await this.paymentService.checkout(ctx, data);
-    return { url };
+  ): Promise<BaseApiResponse<string>> {
+    return this.paymentService.checkout(ctx, data);
   }
 
   @Get('/vnpay-return')

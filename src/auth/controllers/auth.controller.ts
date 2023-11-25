@@ -2,6 +2,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Get,
   Post,
   UseGuards,
   UseInterceptors,
@@ -40,6 +41,14 @@ export class AuthController {
     @Body() body: RegisterInput,
   ): Promise<BaseApiResponse<UserOutputDto>> {
     return this.authService.register(body);
+  }
+
+  @Get('current-user')
+  @UseInterceptors(ClassSerializerInterceptor)
+  public async getCurrentUser(
+    @ReqUser() ctx: RequestContext
+  ): Promise<BaseApiResponse<UserOutputDto>> {
+    return this.userService.getCurrentUser(ctx.user.id);
   }
 
   @Post('login')

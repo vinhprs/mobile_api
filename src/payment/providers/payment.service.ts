@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import crypto from 'crypto';
 import queryString from 'qs';
-import { VNPAY_MESSAGE } from '../../common/constants';
+import { MESSAGES, VNPAY_MESSAGE } from '../../common/constants';
 import { OrderService } from '../../modules/order/order.service';
 import { BaseApiResponse } from '../../shared/dtos';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
@@ -19,7 +19,10 @@ export class PaymentService {
     private readonly configService: ConfigService,
   ) {}
 
-  async checkout(ctx: RequestContext, data: CheckoutCartDto): Promise<any> {
+  async checkout(
+    ctx: RequestContext, 
+    data: CheckoutCartDto
+  ): Promise<BaseApiResponse<string>> {
     const { items } = data;
     const totalPrice = items.reduce((total, current) => {
       total += current.price;
@@ -31,7 +34,12 @@ export class PaymentService {
       orders._id,
       totalPrice,
     );
-    return paymentUrl;
+    return {
+      error: false,
+      data: paymentUrl,
+      message: MESSAGES.GET_SUCCEED,
+      code: 200
+    };
   }
 
   getPaymentStatus(query: VnpayPaymentUrlDto) {

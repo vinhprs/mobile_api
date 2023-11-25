@@ -36,16 +36,33 @@ export class CourseService {
     private readonly cartService: CartService,
   ) {}
 
-  async getCourseById(_id: number): Promise<BaseApiResponse<CourseOutput>> {
-    const course = await this.courseRepository
-      .createQueryBuilder('course')
-      .leftJoinAndSelect('course.sections', 'sections')
-      .leftJoinAndSelect('sections.lectures', 'lectures')
-      .andWhere('course._id = :_id', { _id })
-      .getOne();
-    const result = plainToInstance(CourseOutput, course, {
+  async getCourseById(
+    _id: number,
+    userId?: string,
+  ): Promise<BaseApiResponse<CourseOutput>> {
+    const builder = this.courseRepository.createQueryBuilder('course');
+    builder.leftJoinAndSelect('course.sections', 'sections')
+    builder.leftJoinAndSelect('sections.lectures', 'lectures')
+    builder.andWhere('course._id = :_id', { _id })
+
+    const course = await builder.getOne();
+    const instance = plainToInstance(CourseOutput, course, {
       excludeExtraneousValues: true,
     });
+
+    if (userId) {
+      const paidCart = await this.cartService.getPaidCart(
+        userId,
+        instance._id,
+      );
+      instance.isPaid = paidCart?.data?.status || false;
+      instance.isAddToCart = paidCart?.data ? true : false;
+    }
+
+    const result = plainToInstance(CourseOutput, instance, {
+      excludeExtraneousValues: true,
+    });
+
     return {
       error: false,
       data: result,
@@ -251,4 +268,34 @@ export class CourseService {
       code: 200,
     };
   }
+
+  async getPaidCourse(
+    userId: string
+  ): Promise<BaseApiResponse<CourseOutput[]>> {
+    const user = await this.userService.getUserByUserId(userId);
+    if(!user)
+      throw new HttpException(
+        {
+          error: true,
+          data: null,
+          message: MESSAGES.NOT_FOUND,
+          code: 404,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+
+    const paidCourse = await this.cartService.getPaidCourse(userId);
+    const courses = paidCourse.reduce((accummulator, current) => {
+      const course = current.course;
+      course.isPaid = true;
+      return [...accummulator, course];
+    }, [] as CourseOutput[])
+
+    return {
+      error: false,
+      data: courses,
+      message: MESSAGES.GET_SUCCEED,
+      code: 200
+    };
+  } 
 }

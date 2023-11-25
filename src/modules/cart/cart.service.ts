@@ -66,7 +66,22 @@ export class CartService {
     };
   }
 
-  async getMyCart(userId: string): Promise<BaseApiResponse<SummaryCartOutput>> {
+  async getPaidCourse(
+    userId: string
+  ): Promise<CartOutput[]> {
+    const builder = this.cartRepository.createQueryBuilder('cart')
+    builder.leftJoinAndSelect('cart.course', 'course')
+    builder.andWhere('cart.user_id = :user_id', { user_id: userId })
+    
+    const paidCart = await builder.getMany();
+
+    return plainToInstance(CartOutput, paidCart, {
+      excludeExtraneousValues: true
+    });
+  }
+
+  async getMyCart(userId: string)
+  : Promise<BaseApiResponse<SummaryCartOutput>> {
     const user = await this.userService.getUserByUserId(userId);
     if (!user)
       throw new HttpException(

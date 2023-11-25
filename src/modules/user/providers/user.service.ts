@@ -40,13 +40,31 @@ export class UserService {
     });
   }
 
-  public async getUserByUserId(_id: string): Promise<User | null> {
+  public async getUserByUserId(
+    _id: string
+  ): Promise<User | null> {
     const user = await this.userRepository.findOne({
       where: { _id },
       relations: ['roles', 'roles.permissions'],
     });
 
     return user;
+  }
+
+  public async getCurrentUser(
+    _id: string
+  ): Promise<BaseApiResponse<UserOutputDto>> {
+    const user = await this.getUserByUserId(_id);
+
+    const result = plainToInstance(UserOutputDto, user, {
+      excludeExtraneousValues: true
+    });
+    return {
+      error: false,
+      data: result,
+      message: MESSAGES.GET_SUCCEED,
+      code: 200
+    };
   }
 
   public async create(data: RegisterInput): Promise<User> {

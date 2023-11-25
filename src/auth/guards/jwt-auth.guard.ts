@@ -14,7 +14,23 @@ export class JwtAuthGuard extends AuthGuard(STRATEGY_JWT_AUTH) {
       'isPublic',
       context.getHandler(),
     );
-    if (isPublic) return true;
+    if (isPublic) {
+      const request = context.switchToHttp().getRequest();
+      const token = this.extractToken(request);
+      if (token) {
+        return super.canActivate(context);
+      }
+      return true;
+    }
     return super.canActivate(context);
+  }
+
+  private extractToken(request: any): string | null {
+    // Extract token from the request, modify this based on your token extraction logic
+    const authorizationHeader = request.headers.authorization;
+    if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
+      return authorizationHeader.slice(7);
+    }
+    return null;
   }
 }
