@@ -3,10 +3,6 @@ import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 import { PaginationParamsDto } from '../../../shared/dtos';
 
 export class FilterCourseDto extends PaginationParamsDto {
-  @IsString()
-  @IsOptional()
-  userId?: string;
-
   @Type(() => Number)
   @IsNumber()
   @IsOptional()

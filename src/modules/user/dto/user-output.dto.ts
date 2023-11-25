@@ -25,23 +25,14 @@ export class UserOutputDto {
 
   @Expose()
   @ApiProperty()
-  public appleId: string;
-
-  @Expose()
-  @ApiProperty()
-  public googleId: string;
-
-  @Expose()
-  @ApiProperty()
-  public facebookId: string;
-
-  @Expose()
-  @ApiProperty()
   public username: string;
 
   @Expose()
   @ApiProperty()
   public gender: boolean;
+
+  @Expose()
+  public avatar: string;
 
   @Expose()
   @ApiProperty()

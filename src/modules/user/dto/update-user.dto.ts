@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsString,
   Length,
+  Min,
   ValidateNested,
 } from 'class-validator';
 import { AddressInput } from '../../../modules/address/dto/address-input.dto';
@@ -37,6 +38,7 @@ export class UpdateUserInput {
   address?: AddressInput;
 
   @IsNumber()
+  @Min(1)
   @IsOptional()
   grade: number;
 
@@ -48,6 +50,10 @@ export class UpdateUserInput {
   @IsNumber()
   @IsOptional()
   subjectGroup?: number;
+
+  @IsString()
+  @IsOptional()
+  avatar?: string;
 }
 
 export class UpdateProfileDto {}

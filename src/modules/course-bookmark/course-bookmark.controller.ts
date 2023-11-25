@@ -2,7 +2,6 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
-  Delete,
   Get,
   Post,
   UseInterceptors,
@@ -25,15 +24,6 @@ export class CourseBookmarkController {
     @ReqUser() ctx: RequestContext,
   ): Promise<BaseApiResponse<null>> {
     return this.bookmarkService.bookmarkCourse(data, ctx.user.id);
-  }
-
-  @Delete('')
-  @UseInterceptors(ClassSerializerInterceptor)
-  async removeBookmark(
-    @Body() data: BookmarkCourseDto,
-    @ReqUser() ctx: RequestContext,
-  ): Promise<BaseApiResponse<null>> {
-    return this.bookmarkService.removeBookmark(data, ctx.user.id);
   }
 
   @Get('/my-list')

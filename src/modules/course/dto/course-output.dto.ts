@@ -56,6 +56,10 @@ export class CourseOutput {
   @Transform((value) => value.value || false, { toClassOnly: true })
   isAddToCart: boolean;
 
+  @Expose()
+  @Transform((value) => value.value || false, { toClassOnly: true })
+  isBookmark: boolean;
+
   @Type(() => CartOutput)
   carts: CartOutput[];
 

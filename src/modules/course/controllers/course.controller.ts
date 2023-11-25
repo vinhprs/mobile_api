@@ -68,9 +68,10 @@ export class CourseController {
   @Public()
   @UseInterceptors(ClassSerializerInterceptor)
   async getCourses(
+    @ReqUser() ctx: RequestContext,
     @Query() filter: FilterCourseDto,
   ): Promise<BaseApiResponse<BasePaginationResponse<CourseOutput>>> {
-    return this.courseService.filterCourses(filter);
+    return this.courseService.filterCourses(ctx.user.id ,filter);
   }
 
   @Get('/:id')

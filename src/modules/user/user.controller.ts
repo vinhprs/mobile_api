@@ -2,6 +2,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Get,
   Put,
   UseInterceptors,
 } from '@nestjs/common';
@@ -14,6 +15,14 @@ import { UserService } from './providers';
 @Controller('')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get('current-user')
+  @UseInterceptors(ClassSerializerInterceptor)
+  public async getCurrentUser(
+    @ReqUser() ctx: RequestContext
+  ): Promise<BaseApiResponse<UserOutputDto>> {
+    return this.userService.getCurrentUser(ctx.user.id);
+  }
 
   @Put('/info')
   @UseInterceptors(ClassSerializerInterceptor)

@@ -69,6 +69,9 @@ export class User {
   @Column('varchar', { nullable: true, name: 'refresh_token' })
   refreshToken?: string;
 
+  @Column('text', { nullable: true, name: 'avatar' })
+  avatar?: string;
+
   @Column('timestamp', {
     nullable: false,
     default: () => 'CURRENT_TIMESTAMP',

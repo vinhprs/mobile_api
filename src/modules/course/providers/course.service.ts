@@ -22,6 +22,7 @@ import { CategoryService } from '../../../modules/category/category.service';
 import { CategoryOutput } from 'src/modules/category/dto';
 import { PublicCourseInput } from '../dto/public-course-input.dto';
 import { CartService } from '../../../modules/cart/cart.service';
+import { CourseBookmarkService } from '../../../modules/course-bookmark/course-bookmark.service';
 
 @Injectable()
 export class CourseService {
@@ -34,6 +35,8 @@ export class CourseService {
     private readonly categoryService: CategoryService,
     @Inject(forwardRef(() => CartService))
     private readonly cartService: CartService,
+    @Inject(forwardRef(() => CourseBookmarkService))
+    private readonly bookmarkService: CourseBookmarkService
   ) {}
 
   async getCourseById(
@@ -51,12 +54,16 @@ export class CourseService {
     });
 
     if (userId) {
-      const paidCart = await this.cartService.getPaidCart(
-        userId,
-        instance._id,
-      );
+      const [paidCart, bookmark] = await Promise.all([
+        this.cartService.getPaidCart(
+          userId,
+          instance._id,
+        ),
+        this.bookmarkService.getBookmarkById(instance._id, userId)
+      ]) 
       instance.isPaid = paidCart?.data?.status || false;
       instance.isAddToCart = paidCart?.data ? true : false;
+      instance.isBookmark = bookmark ? true : false;
     }
 
     const result = plainToInstance(CourseOutput, instance, {
@@ -186,6 +193,7 @@ export class CourseService {
   }
 
   async filterCourses(
+    userId: string,
     filter: FilterCourseDto,
   ): Promise<BaseApiResponse<BasePaginationResponse<CourseOutput>>> {
     const {
@@ -198,7 +206,6 @@ export class CourseService {
       search,
       startDuration,
       endDuration,
-      userId,
     } = filter;
     const queryBuilder = this.courseRepository.createQueryBuilder('course');
     queryBuilder.andWhere('course.isPublic = TRUE');
@@ -245,12 +252,16 @@ export class CourseService {
         course.category = plainToInstance(CategoryOutput, category);
         course.subCategory = plainToInstance(CategoryOutput, subCategory);
         if (userId) {
-          const paidCart = await this.cartService.getPaidCart(
-            userId,
-            course._id,
-          );
+          const [paidCart, bookmark] = await Promise.all([
+            this.cartService.getPaidCart(
+              userId,
+              course._id,
+            ),
+            this.bookmarkService.getBookmarkById(course._id, userId)
+          ]) 
           course.isPaid = paidCart?.data?.status || false;
           course.isAddToCart = paidCart?.data ? true : false;
+          course.isBookmark = bookmark ? true : false;
         }
       }),
     );

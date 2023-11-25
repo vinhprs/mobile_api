@@ -7,6 +7,7 @@ import { UserModule } from '../user/user.module';
 import { SubjectsModule } from '../subjects/subjects.module';
 import { CategoryModule } from '../category/category.module';
 import { CartModule } from '../cart/cart.module';
+import { CourseBookmarkModule } from '../course-bookmark/course-bookmark.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Course, Section, Lecture]),
@@ -14,6 +15,7 @@ import { CartModule } from '../cart/cart.module';
     SubjectsModule,
     CategoryModule,
     forwardRef(() => CartModule),
+    forwardRef(() => CourseBookmarkModule)
   ],
   controllers: Object.values(controllers),
   providers: Object.values(providers),
