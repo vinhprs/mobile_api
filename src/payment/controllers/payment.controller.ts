@@ -5,6 +5,7 @@ import {
   Get,
   Post,
   Query,
+  Redirect,
   UseInterceptors,
 } from '@nestjs/common';
 import { PaymentService } from '../providers/payment.service';
@@ -18,7 +19,7 @@ export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
   @Post('/checkout')
-  // @Redirect()
+  @Redirect()
   @UseInterceptors(ClassSerializerInterceptor)
   async checkout(
     @ReqUser() ctx: RequestContext,
