@@ -7,7 +7,7 @@ import {
   Post,
   Put,
   Query,
-  UseInterceptors
+  UseInterceptors,
 } from '@nestjs/common';
 import { BaseApiResponse, BasePaginationResponse } from 'src/shared/dtos';
 import { Public, ReqUser, Roles } from '../../../common';
@@ -59,7 +59,7 @@ export class CourseController {
   @Roles(ROLES.STUDENT)
   @UseInterceptors(ClassSerializerInterceptor)
   async getPaidCourse(
-    @ReqUser() ctx: RequestContext
+    @ReqUser() ctx: RequestContext,
   ): Promise<BaseApiResponse<CourseOutput[]>> {
     return this.courseService.getPaidCourse(ctx.user.id);
   }
@@ -71,7 +71,7 @@ export class CourseController {
     @ReqUser() ctx: RequestContext,
     @Query() filter: FilterCourseDto,
   ): Promise<BaseApiResponse<BasePaginationResponse<CourseOutput>>> {
-    return this.courseService.filterCourses(ctx.user.id ,filter);
+    return this.courseService.filterCourses(ctx.user.id, filter);
   }
 
   @Get('/:id')

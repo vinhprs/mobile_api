@@ -15,7 +15,7 @@ import { CourseBookmarkModule } from '../course-bookmark/course-bookmark.module'
     SubjectsModule,
     CategoryModule,
     forwardRef(() => CartModule),
-    forwardRef(() => CourseBookmarkModule)
+    forwardRef(() => CourseBookmarkModule),
   ],
   controllers: Object.values(controllers),
   providers: Object.values(providers),

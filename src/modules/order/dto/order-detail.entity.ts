@@ -34,7 +34,9 @@ export class OrderDetail {
   @JoinColumn({ name: 'order_id' })
   order: Order;
 
-  @ManyToOne(() => Cart, (cart) => cart.orderDetails)
+  @ManyToOne(() => Cart, (cart) => cart.orderDetails, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'cart_id' })
   cart: Cart;
 }

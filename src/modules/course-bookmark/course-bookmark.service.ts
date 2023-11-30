@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Inject, Injectable, forwardRef } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  forwardRef,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BaseApiResponse } from '../../shared/dtos';
@@ -49,7 +55,7 @@ export class CourseBookmarkService {
     const [course, user, bookmark] = await Promise.all([
       this.courseService.getCourseById(courseId),
       this.userService.getUserByUserId(userId),
-      this.getBookmarkById(courseId, userId)
+      this.getBookmarkById(courseId, userId),
     ]);
     if (!course.data || !user)
       throw new HttpException(
@@ -61,8 +67,7 @@ export class CourseBookmarkService {
         },
         HttpStatus.NOT_FOUND,
       );
-    if(bookmark) await this.bookmarkRepository.remove(bookmark);
-
+    if (bookmark) await this.bookmarkRepository.remove(bookmark);
     else {
       const createBookmark = this.bookmarkRepository.create();
       await this.bookmarkRepository.save({

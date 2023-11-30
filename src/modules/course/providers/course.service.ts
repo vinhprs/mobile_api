@@ -36,7 +36,7 @@ export class CourseService {
     @Inject(forwardRef(() => CartService))
     private readonly cartService: CartService,
     @Inject(forwardRef(() => CourseBookmarkService))
-    private readonly bookmarkService: CourseBookmarkService
+    private readonly bookmarkService: CourseBookmarkService,
   ) {}
 
   async getCourseById(
@@ -44,9 +44,9 @@ export class CourseService {
     userId?: string,
   ): Promise<BaseApiResponse<CourseOutput>> {
     const builder = this.courseRepository.createQueryBuilder('course');
-    builder.leftJoinAndSelect('course.sections', 'sections')
-    builder.leftJoinAndSelect('sections.lectures', 'lectures')
-    builder.andWhere('course._id = :_id', { _id })
+    builder.leftJoinAndSelect('course.sections', 'sections');
+    builder.leftJoinAndSelect('sections.lectures', 'lectures');
+    builder.andWhere('course._id = :_id', { _id });
 
     const course = await builder.getOne();
     const instance = plainToInstance(CourseOutput, course, {
@@ -55,12 +55,9 @@ export class CourseService {
 
     if (userId) {
       const [paidCart, bookmark] = await Promise.all([
-        this.cartService.getPaidCart(
-          userId,
-          instance._id,
-        ),
-        this.bookmarkService.getBookmarkById(instance._id, userId)
-      ]) 
+        this.cartService.getPaidCart(userId, instance._id),
+        this.bookmarkService.getBookmarkById(instance._id, userId),
+      ]);
       instance.isPaid = paidCart?.data?.status || false;
       instance.isAddToCart = paidCart?.data ? true : false;
       instance.isBookmark = bookmark ? true : false;
@@ -253,12 +250,9 @@ export class CourseService {
         course.subCategory = plainToInstance(CategoryOutput, subCategory);
         if (userId) {
           const [paidCart, bookmark] = await Promise.all([
-            this.cartService.getPaidCart(
-              userId,
-              course._id,
-            ),
-            this.bookmarkService.getBookmarkById(course._id, userId)
-          ]) 
+            this.cartService.getPaidCart(userId, course._id),
+            this.bookmarkService.getBookmarkById(course._id, userId),
+          ]);
           course.isPaid = paidCart?.data?.status || false;
           course.isAddToCart = paidCart?.data ? true : false;
           course.isBookmark = bookmark ? true : false;
@@ -281,10 +275,10 @@ export class CourseService {
   }
 
   async getPaidCourse(
-    userId: string
+    userId: string,
   ): Promise<BaseApiResponse<CourseOutput[]>> {
     const user = await this.userService.getUserByUserId(userId);
-    if(!user)
+    if (!user)
       throw new HttpException(
         {
           error: true,
@@ -300,13 +294,13 @@ export class CourseService {
       const course = current.course;
       course.isPaid = true;
       return [...accummulator, course];
-    }, [] as CourseOutput[])
+    }, [] as CourseOutput[]);
 
     return {
       error: false,
       data: courses,
       message: MESSAGES.GET_SUCCEED,
-      code: 200
+      code: 200,
     };
-  } 
+  }
 }

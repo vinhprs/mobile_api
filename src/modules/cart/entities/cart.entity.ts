@@ -49,6 +49,6 @@ export class Cart {
   @JoinColumn({ name: 'course_id' })
   course: Course;
 
-  @OneToMany(() => OrderDetail, (detail) => detail.cart)
+  @OneToMany(() => OrderDetail, (detail) => detail.cart, {})
   orderDetails: OrderDetail[];
 }

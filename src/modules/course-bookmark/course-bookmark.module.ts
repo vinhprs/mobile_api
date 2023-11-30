@@ -14,6 +14,6 @@ import { CourseModule } from '../course/course.module';
   ],
   controllers: [CourseBookmarkController],
   providers: [CourseBookmarkService],
-  exports: [CourseBookmarkService]
+  exports: [CourseBookmarkService],
 })
 export class CourseBookmarkModule {}

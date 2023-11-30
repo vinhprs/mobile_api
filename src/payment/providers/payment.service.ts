@@ -20,8 +20,8 @@ export class PaymentService {
   ) {}
 
   async checkout(
-    ctx: RequestContext, 
-    data: CheckoutCartDto
+    ctx: RequestContext,
+    data: CheckoutCartDto,
   ): Promise<BaseApiResponse<string>> {
     const { items } = data;
     const totalPrice = items.reduce((total, current) => {
@@ -38,7 +38,7 @@ export class PaymentService {
       error: false,
       data: paymentUrl,
       message: MESSAGES.GET_SUCCEED,
-      code: 200
+      code: 200,
     };
   }
 

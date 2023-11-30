@@ -10,6 +10,7 @@ import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
 import { MESSAGES } from '../../common/constants';
 import { BaseApiResponse } from '../../shared/dtos';
+import { CourseBookmarkService } from '../course-bookmark/course-bookmark.service';
 import { CourseService } from '../course/providers';
 import { UserService } from '../user/providers';
 import { CreateCartDto } from './dto';
@@ -24,6 +25,7 @@ export class CartService {
     private readonly userService: UserService,
     @Inject(forwardRef(() => CourseService))
     private readonly courseService: CourseService,
+    private readonly bookmarkService: CourseBookmarkService,
   ) {}
 
   async getCartById(id: number): Promise<CartOutput> {
@@ -66,22 +68,19 @@ export class CartService {
     };
   }
 
-  async getPaidCourse(
-    userId: string
-  ): Promise<CartOutput[]> {
-    const builder = this.cartRepository.createQueryBuilder('cart')
-    builder.leftJoinAndSelect('cart.course', 'course')
-    builder.andWhere('cart.user_id = :user_id', { user_id: userId })
-    
+  async getPaidCourse(userId: string): Promise<CartOutput[]> {
+    const builder = this.cartRepository.createQueryBuilder('cart');
+    builder.leftJoinAndSelect('cart.course', 'course');
+    builder.andWhere('cart.user_id = :user_id', { user_id: userId });
+
     const paidCart = await builder.getMany();
 
     return plainToInstance(CartOutput, paidCart, {
-      excludeExtraneousValues: true
+      excludeExtraneousValues: true,
     });
   }
 
-  async getMyCart(userId: string)
-  : Promise<BaseApiResponse<SummaryCartOutput>> {
+  async getMyCart(userId: string): Promise<BaseApiResponse<SummaryCartOutput>> {
     const user = await this.userService.getUserByUserId(userId);
     if (!user)
       throw new HttpException(
@@ -99,7 +98,20 @@ export class CartService {
       .andWhere('cart.user_id = :user_id', { user_id: userId })
       .andWhere('cart.status = :status', { status: false })
       .getMany();
-    const cartOutput = plainToInstance(CartOutput, carts, {
+    const instance = plainToInstance(CartOutput, carts, {
+      excludeExtraneousValues: true,
+    });
+    await Promise.all(
+      instance.map(async (cart) => {
+        const bookmark = await this.bookmarkService.getBookmarkById(
+          cart.course._id,
+          userId,
+        );
+        cart.course.isBookmark = bookmark ? true : false;
+        cart.course.isAddToCart = true;
+      }),
+    );
+    const cartOutput = plainToInstance(CartOutput, instance, {
       excludeExtraneousValues: true,
     });
 
@@ -188,7 +200,7 @@ export class CartService {
         },
         HttpStatus.UNAUTHORIZED,
       );
-    await this.cartRepository.remove(cart);
+    await this.cartRepository.delete({ _id: id });
     return {
       error: false,
       data: null,

@@ -76,12 +76,12 @@ export class QuestionService {
             ...instance,
             status: isCorrect,
             question,
-            studentAnswer: answer
+            studentAnswer: answer,
           }),
         );
         output.push(result);
         // remove the selected after correction
-        const index = questions.findIndex(q => q._id === question._id);
+        const index = questions.findIndex((q) => q._id === question._id);
         questions.splice(index, 1);
       }
     });
@@ -97,11 +97,11 @@ export class QuestionService {
         instanceToPlain({
           ...instance,
           status: false,
-          question: unselect
+          question: unselect,
         }),
       );
       output.push(result);
-    })
+    });
     return output;
   }
 }

@@ -19,7 +19,7 @@ export class UserController {
   @Get('current-user')
   @UseInterceptors(ClassSerializerInterceptor)
   public async getCurrentUser(
-    @ReqUser() ctx: RequestContext
+    @ReqUser() ctx: RequestContext,
   ): Promise<BaseApiResponse<UserOutputDto>> {
     return this.userService.getCurrentUser(ctx.user.id);
   }
