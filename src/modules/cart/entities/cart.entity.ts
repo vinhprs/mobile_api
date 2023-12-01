@@ -1,4 +1,4 @@
-import { OrderDetail } from '../../order/dto/order-detail.entity';
+import { OrderDetail } from '../../order/entities/order-detail.entity';
 import { Course } from '../../../modules/course/entities';
 import { User } from '../../../modules/user/entities';
 import {

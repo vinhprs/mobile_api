@@ -15,6 +15,10 @@ export class AxiosRequestYoutube {
 
   @IsString()
   @IsOptional()
+  videoId?: string;
+
+  @IsString()
+  @IsOptional()
   id?: string;
 
   @IsNumber()

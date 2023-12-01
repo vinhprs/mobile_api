@@ -30,7 +30,7 @@ export class PaymentController {
   @Get('/vnpay-return')
   @Public()
   vnpayReturn(@Query() query: VnpayPaymentUrlDto) {
-    return this.paymentService.getPaymentStatus(query);
+    return this.paymentService.webHook(query);
   }
 
   @Get('/vnpay_ipn')

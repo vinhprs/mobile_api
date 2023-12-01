@@ -4,14 +4,19 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   ValidateNested,
 } from 'class-validator';
 import { PAYMENT_METHOD } from '../../shared/enums';
 import { Type } from 'class-transformer';
 
 export class CartInfoDto {
-  @IsNotEmpty()
   @IsNumber()
+  @IsOptional()
+  courseId: number;
+
+  @IsNumber()
+  @IsOptional()
   cartId: number;
 
   @IsNotEmpty()

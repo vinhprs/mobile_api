@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Section } from './section.entity';
 import { CourseBookmark } from '../../../modules/course-bookmark/entities';
 import { Cart } from '../../../modules/cart/entities/cart.entity';
+import { OrderDetail } from '../../../modules/order/entities';
 
 @Entity()
 export class Course {
@@ -75,4 +76,7 @@ export class Course {
     orphanedRowAction: 'delete',
   })
   cart: Cart[];
+
+  @OneToMany(() => OrderDetail, detail => detail.course)
+  orderDetails: OrderDetail[];
 }

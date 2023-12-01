@@ -23,6 +23,7 @@ import { CourseBookmarkModule } from './modules/course-bookmark/course-bookmark.
 import { CartModule } from './modules/cart/cart.module';
 import { PaymentModule } from './payment/payment.module';
 import { OrderModule } from './modules/order/order.module';
+import { CommentsModule } from './modules/comments/comments.module';
 
 @Module({
   imports: [
@@ -123,6 +124,10 @@ import { OrderModule } from './modules/order/order.module';
       {
         path: 'files',
         module: FilesModule,
+      }, 
+      {
+        path: 'comments',
+        module: CommentsModule,
       },
     ]),
     UserModule,
@@ -136,6 +141,7 @@ import { OrderModule } from './modules/order/order.module';
     CartModule,
     PaymentModule,
     OrderModule,
+    CommentsModule,
   ],
   providers: [
     // Global Guard, Authentication check on all routers
