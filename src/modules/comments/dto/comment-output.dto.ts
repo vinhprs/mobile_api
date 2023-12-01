@@ -6,7 +6,7 @@ export class CommentOutput {
   _id: string;
 
   @Expose()
-  authorName: string;
+  author: string;
 
   @Expose()
   authorThumbnail: string;
