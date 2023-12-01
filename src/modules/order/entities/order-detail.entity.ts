@@ -5,8 +5,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Order } from '../entities/order.entity';
+import { Order } from './order.entity';
 import { Cart } from '../../cart/entities/cart.entity';
+import { Course } from '../../../modules/course/entities';
 
 @Entity()
 export class OrderDetail {
@@ -39,4 +40,10 @@ export class OrderDetail {
   })
   @JoinColumn({ name: 'cart_id' })
   cart: Cart;
+
+  @ManyToOne(() => Course, (course) => course.orderDetails, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'course_id' })
+  course: Course;
 }

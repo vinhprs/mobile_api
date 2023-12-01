@@ -1,6 +1,7 @@
+import { Comment } from '../../../modules/comments/entities/comment.entity';
 import { Section } from '.';
 import { LECTURE_TYPE } from '../../../shared/enums';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Lecture {
@@ -39,4 +40,7 @@ export class Lecture {
 
   @ManyToOne(() => Section, (section) => section.lectures)
   section: Section;
+
+  @OneToMany(() => Comment, comnent => comnent.lecture)
+  comments: Comment[];
 }

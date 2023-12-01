@@ -5,12 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CourseBookmark } from './entities/course-bookmark.entity';
 import { UserModule } from '../user/user.module';
 import { CourseModule } from '../course/course.module';
+import { CartModule } from '../cart/cart.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([CourseBookmark]),
     UserModule,
     forwardRef(() => CourseModule),
+    forwardRef(() => CartModule)
   ],
   controllers: [CourseBookmarkController],
   providers: [CourseBookmarkService],

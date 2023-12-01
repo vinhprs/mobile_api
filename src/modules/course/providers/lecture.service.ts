@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Lecture } from '../entities';
 import { Repository } from 'typeorm';
-import { CreateLecture } from '../dto';
+import { CreateLecture, LectureOutput } from '../dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class LectureService {
@@ -18,5 +19,14 @@ export class LectureService {
       lectures.push(createLecture);
     });
     return lectures;
+  }
+
+  async getAll()
+  : Promise<LectureOutput[]> {
+    const data = await this.lectureRepository.find({});
+
+    return plainToInstance(LectureOutput, data, {
+      excludeExtraneousValues: true
+    });
   }
 }

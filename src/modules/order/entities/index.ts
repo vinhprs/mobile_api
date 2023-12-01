@@ -1,2 +1,2 @@
-export * from '../dto/order-detail.entity';
+export * from './order-detail.entity';
 export * from './order.entity';

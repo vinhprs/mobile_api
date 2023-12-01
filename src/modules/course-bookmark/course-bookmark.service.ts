@@ -6,15 +6,16 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { BaseApiResponse } from '../../shared/dtos';
-import { CourseBookmark } from './entities';
-import { BookmarkCourseDto } from './dto/create-course-bookmark.dto';
-import { UserService } from '../user/providers';
-import { CourseService } from '../course/providers';
-import { MESSAGES } from '../../common/constants';
-import { BookmarkOuput } from './dto';
 import { plainToInstance } from 'class-transformer';
+import { Repository } from 'typeorm';
+import { MESSAGES } from '../../common/constants';
+import { BaseApiResponse } from '../../shared/dtos';
+import { CartService } from '../cart/cart.service';
+import { CourseService } from '../course/providers';
+import { UserService } from '../user/providers';
+import { BookmarkOuput } from './dto';
+import { BookmarkCourseDto } from './dto/create-course-bookmark.dto';
+import { CourseBookmark } from './entities';
 
 @Injectable()
 export class CourseBookmarkService {
@@ -24,6 +25,8 @@ export class CourseBookmarkService {
     private readonly userService: UserService,
     @Inject(forwardRef(() => CourseService))
     private readonly courseService: CourseService,
+    @Inject(forwardRef(() => CartService))
+    private readonly cartService: CartService
   ) {}
 
   async getUserBookmarks(
@@ -36,9 +39,23 @@ export class CourseBookmarkService {
       .orderBy('bookmark.createdAt', 'DESC')
       .getMany();
 
-    const result = plainToInstance(BookmarkOuput, bookmarks, {
+    const instance = plainToInstance(BookmarkOuput, bookmarks, {
       excludeExtraneousValues: true,
     });
+
+    await Promise.all(
+      instance.map(async (item) => {
+        const [bookmark, cart] = await Promise.all([
+          this.getBookmarkById(item.course._id, userId),
+          this.cartService.getPaidCart(userId, item.course._id)
+        ]) 
+        item.course.isBookmark = bookmark ? true : false;
+        item.course.isAddToCart = cart ? true : false;
+      })
+    )
+    const result = plainToInstance(BookmarkOuput, instance, {
+      excludeExtraneousValues: true
+    })
     return {
       error: false,
       data: result,

@@ -25,6 +25,7 @@ export class CartService {
     private readonly userService: UserService,
     @Inject(forwardRef(() => CourseService))
     private readonly courseService: CourseService,
+    @Inject(forwardRef(() => CourseBookmarkService))
     private readonly bookmarkService: CourseBookmarkService,
   ) {}
 
@@ -72,6 +73,7 @@ export class CartService {
     const builder = this.cartRepository.createQueryBuilder('cart');
     builder.leftJoinAndSelect('cart.course', 'course');
     builder.andWhere('cart.user_id = :user_id', { user_id: userId });
+    builder.andWhere('cart.status = TRUE')
 
     const paidCart = await builder.getMany();
 

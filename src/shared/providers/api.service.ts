@@ -33,13 +33,14 @@ export class ApiService {
     path: string,
     query: AxiosRequestYoutube,
   ): Promise<any> {
-    const { key, part, maxResults, id, playlistId } = query;
+    const { key, part, maxResults, id, playlistId, videoId } = query;
     const params = {
       key,
       part,
       maxResults,
       id,
       playlistId,
+      videoId
     };
     deleteKey(params);
     const axiosConfig: AxiosRequestConfig = {

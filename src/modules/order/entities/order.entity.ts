@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { User } from '../../../modules/user/entities';
 import { PAYMENT_METHOD } from '../../../shared/enums';
-import { OrderDetail } from '../dto/order-detail.entity';
+import { OrderDetail } from './order-detail.entity';
 
 @Entity()
 export class Order {
