@@ -21,6 +21,16 @@ export class LectureService {
     return lectures;
   }
 
+  async getLectureById(lectureId: number): Promise<LectureOutput> {
+    const lecture = await this.lectureRepository.findOne({
+      where: { _id: lectureId },
+    });
+
+    return plainToInstance(LectureOutput, lecture, {
+      excludeExtraneousValues: true,
+    });
+  }
+
   async getAll(): Promise<LectureOutput[]> {
     const data = await this.lectureRepository.find({});
 

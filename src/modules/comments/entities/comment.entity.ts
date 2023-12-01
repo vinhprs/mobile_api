@@ -16,7 +16,7 @@ export class Comment {
   @Column('varchar', { nullable: false, name: 'author_name' })
   author: string;
 
-  @Column('text', { nullable: false, name: 'author_thumbnail' })
+  @Column('text', { nullable: true, name: 'author_thumbnail' })
   authorThumbnail: string;
 
   @Column('text', { nullable: false, name: 'content' })
