@@ -12,6 +12,9 @@ export class CommentOutput {
   authorThumbnail: string;
 
   @Expose()
+  likeCount: string;
+
+  @Expose()
   content: string;
 
   @Expose()

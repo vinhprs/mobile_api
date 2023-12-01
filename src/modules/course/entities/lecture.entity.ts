@@ -47,6 +47,9 @@ export class Lecture {
   @ManyToOne(() => Section, (section) => section.lectures)
   section: Section;
 
-  @OneToMany(() => Comment, (comnent) => comnent.lecture)
+  @OneToMany(() => Comment, (comnent) => comnent.lecture, {
+    cascade: ['update', 'remove'],
+    orphanedRowAction: 'delete'
+  })
   comments: Comment[];
 }

@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity({name: 'comment'})
 export class Comment {
   @PrimaryGeneratedColumn('uuid')
   _id!: string;
@@ -22,6 +22,9 @@ export class Comment {
   @Column('text', { nullable: false, name: 'content' })
   content: string;
 
+  @Column('int', { nullable: false, default: 0, name: 'like_count' })
+  likeCount: number;
+
   @Column('timestamp', {
     nullable: false,
     default: () => 'CURRENT_TIMESTAMP',
@@ -29,7 +32,9 @@ export class Comment {
   })
   createdAt!: Date;
 
-  @ManyToOne(() => Lecture, (lecture) => lecture.comments)
+  @ManyToOne(() => Lecture, (lecture) => lecture.comments, {
+    onDelete: 'CASCADE'
+  })
   @JoinColumn({ name: 'lecture_id' })
   lecture: Lecture;
 

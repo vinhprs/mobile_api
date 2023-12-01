@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Comment } from './entities/comment.entity';
-import { BaseApiResponse, BasePaginationResponse } from '../../shared/dtos';
-import { MESSAGES } from '../../common/constants';
 import { plainToInstance } from 'class-transformer';
-import { CommentOutput } from './dto/comment-output.dto';
-import { CommentInput, FilterCommentInput } from './dto';
-import { UserService } from '../user/providers';
+import { Repository } from 'typeorm';
+import { MESSAGES } from '../../common/constants';
+import { BaseApiResponse, BasePaginationResponse } from '../../shared/dtos';
 import { LectureService } from '../course/providers';
+import { UserService } from '../user/providers';
+import { CommentInput, FilterCommentInput } from './dto';
+import { CommentOutput } from './dto/comment-output.dto';
+import { Comment } from './entities/comment.entity';
 
 @Injectable()
 export class CommentsService {
@@ -69,6 +69,7 @@ export class CommentsService {
 
     if (limit) builder.take(limit);
     if (page) builder.skip((page - 1) * limit);
+    builder.addOrderBy('comment.createdAt', 'DESC');
 
     const [comments, total] = await builder.getManyAndCount();
     const result = plainToInstance(CommentOutput, comments, {
@@ -84,5 +85,37 @@ export class CommentsService {
       message: MESSAGES.GET_SUCCEED,
       code: 200,
     };
+  }
+
+  async getCourseComment(
+    courseId: number,
+    query: FilterCommentInput
+  ): Promise<BaseApiResponse<BasePaginationResponse<CommentOutput>>> {
+    const { limit, page } = query;
+    const builder = this.commentRepository.createQueryBuilder('comment')
+    .leftJoinAndSelect('comment.lecture', 'lecture')
+    .leftJoinAndSelect('lecture.section', 'section')
+    .andWhere('section.course_id = :course_id', { course_id: courseId })
+
+    if(limit) builder.take(limit);
+    if(page) builder.skip((page - 1) * limit);
+    builder.orderBy('comment.likeCount', 'DESC');
+    builder.addOrderBy('comment.createdAt', 'DESC');
+
+    const [comments, total] = await builder.getManyAndCount();
+    const result = plainToInstance(CommentOutput, comments, {
+      excludeExtraneousValues: true
+    });
+
+    return {
+      error: false,
+      data: {
+        listData: result,
+        total,
+        totalPage: Math.ceil(total / limit)
+      },
+      message: MESSAGES.GET_SUCCEED,
+      code: 200
+    }
   }
 }

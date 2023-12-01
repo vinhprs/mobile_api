@@ -8,11 +8,11 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
-import { CommentsService } from './comments.service';
-import { BaseApiResponse, BasePaginationResponse } from '../../shared/dtos';
-import { CommentInput, CommentOutput, FilterCommentInput } from './dto';
 import { ReqUser } from '../../common';
+import { BaseApiResponse, BasePaginationResponse } from '../../shared/dtos';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
+import { CommentsService } from './comments.service';
+import { CommentInput, CommentOutput, FilterCommentInput } from './dto';
 
 @Controller('')
 export class CommentsController {
@@ -25,6 +25,15 @@ export class CommentsController {
     @Query() query: FilterCommentInput,
   ): Promise<BaseApiResponse<BasePaginationResponse<CommentOutput>>> {
     return this.commentService.getCommentByLecture(lectureId, query);
+  }
+
+  @Get('/course/:id')
+  @UseInterceptors(ClassSerializerInterceptor)
+  async getCourseComment(
+    @Param('id') courseId: number,
+    @Query() query: FilterCommentInput
+  ): Promise<BaseApiResponse<BasePaginationResponse<CommentOutput>>> {
+    return this.commentService.getCourseComment(courseId, query);
   }
 
   @Post('')
