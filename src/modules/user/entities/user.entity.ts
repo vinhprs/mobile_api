@@ -14,6 +14,7 @@ import { UserExam } from '../../../modules/exam/entities';
 import { CourseBookmark } from '../../../modules/course-bookmark/entities';
 import { Cart } from '../../../modules/cart/entities/cart.entity';
 import { Order } from '../../../modules/order/entities/order.entity';
+import { Comment } from '../../../modules/comments/entities/comment.entity';
 @Entity({ name: 'user' })
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -108,4 +109,7 @@ export class User {
 
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 }

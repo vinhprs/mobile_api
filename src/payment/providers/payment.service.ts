@@ -91,8 +91,6 @@ export class PaymentService {
         },
         HttpStatus.NOT_FOUND,
       );
-    // update payment status
-    await this.orderService.updatePaymentStatus(orderId);
     if (responseCode !== '00')
       throw new HttpException(
         {
@@ -103,6 +101,8 @@ export class PaymentService {
         },
         HttpStatus.PAYMENT_REQUIRED,
       );
+    // update payment status
+    await this.orderService.updatePaymentStatus(orderId);
     return {
       error: false,
       data: null,

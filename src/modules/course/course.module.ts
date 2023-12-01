@@ -17,7 +17,7 @@ import { OrderModule } from '../order/order.module';
     CategoryModule,
     forwardRef(() => CartModule),
     forwardRef(() => CourseBookmarkModule),
-    forwardRef(() => OrderModule)
+    forwardRef(() => OrderModule),
   ],
   controllers: Object.values(controllers),
   providers: Object.values(providers),

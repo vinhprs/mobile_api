@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Inject, Injectable, forwardRef } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  forwardRef,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order, OrderDetail } from './entities';
 import { Repository } from 'typeorm';
@@ -22,7 +28,7 @@ export class OrderService {
     private readonly cartService: CartService,
     private readonly userService: UserService,
     @Inject(forwardRef(() => CourseService))
-    private readonly courseService: CourseService
+    private readonly courseService: CourseService,
   ) {}
 
   async updatePaymentStatus(_id: number): Promise<void> {
@@ -47,8 +53,7 @@ export class OrderService {
     order.paymentStatus = true;
     await Promise.all(
       order.orderDetails.map(async (detail) => {
-        if(detail.cart)
-          await this.cartService.updateCartStatus(detail.cart);
+        if (detail.cart) await this.cartService.updateCartStatus(detail.cart);
       }),
     );
     await this.orderRepository.save(order);
@@ -78,12 +83,14 @@ export class OrderService {
         let cart, course;
         const { courseId, cartId, price } = item;
 
-        cartId ? cart = await this.cartService.getCartById(cartId) : null;
-        courseId ? course = await this.courseService.getCourseById(courseId) : null;
+        cartId ? (cart = await this.cartService.getCartById(cartId)) : null;
+        courseId
+          ? (course = await this.courseService.getCourseById(courseId))
+          : null;
         const orderDetail = this.orderDetailRepository.create({
           cart,
           price,
-          course: course?.data
+          course: course?.data,
         });
         bulkDetail.push(orderDetail);
       }),
@@ -121,37 +128,36 @@ export class OrderService {
     });
   }
 
-  async getPaidOrder(
-    userId: string,
-    courseId?: number,
-  ): Promise<OrderOutput> {
-    const builder = this.orderRepository.createQueryBuilder('order')
-    .leftJoinAndSelect('order.orderDetails', 'detail')
-    .andWhere('order.user_id = :user_id', { user_id: userId })
-    if(courseId)
-      builder.andWhere('detail.course_id = :course_id', { course_id: courseId })
-    
+  async getPaidOrder(userId: string, courseId?: number): Promise<OrderOutput> {
+    const builder = this.orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.orderDetails', 'detail')
+      .andWhere('order.user_id = :user_id', { user_id: userId });
+    if (courseId)
+      builder.andWhere('detail.course_id = :course_id', {
+        course_id: courseId,
+      });
+
     const exist = await builder.getOne();
 
     return plainToInstance(OrderOutput, exist, {
-      excludeExtraneousValues: true
-    })
+      excludeExtraneousValues: true,
+    });
   }
 
-  async getPaidCourses(
-    userId: string
-  ): Promise<OrderOutput[]> {
-    const builder = this.orderRepository.createQueryBuilder('order')
-    .leftJoinAndSelect('order.orderDetails', 'detail')
-    .leftJoinAndSelect('detail.course', 'course')
-    .leftJoinAndSelect('detail.cart', 'cart')
-    .leftJoinAndSelect('cart.course', 'cart_course')
-    .andWhere('order.user_id = :user_id', { user_id: userId })
-    .andWhere('order.payment_status = TRUE')    
+  async getPaidCourses(userId: string): Promise<OrderOutput[]> {
+    const builder = this.orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.orderDetails', 'detail')
+      .leftJoinAndSelect('detail.course', 'course')
+      .leftJoinAndSelect('detail.cart', 'cart')
+      .leftJoinAndSelect('cart.course', 'cart_course')
+      .andWhere('order.user_id = :user_id', { user_id: userId })
+      .andWhere('order.payment_status = TRUE');
     const exist = await builder.getMany();
 
     return plainToInstance(OrderOutput, exist, {
-      excludeExtraneousValues: true
-    })
+      excludeExtraneousValues: true,
+    });
   }
 }

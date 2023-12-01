@@ -12,7 +12,7 @@ import { CartModule } from '../cart/cart.module';
     TypeOrmModule.forFeature([CourseBookmark]),
     UserModule,
     forwardRef(() => CourseModule),
-    forwardRef(() => CartModule)
+    forwardRef(() => CartModule),
   ],
   controllers: [CourseBookmarkController],
   providers: [CourseBookmarkService],

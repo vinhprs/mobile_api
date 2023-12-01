@@ -1,28 +1,39 @@
-import { Lecture } from "../../../modules/course/entities";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from '../../../modules/user/entities';
+import { Lecture } from '../../../modules/course/entities';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Comment {
-    @PrimaryGeneratedColumn('uuid')
-    _id!: string;
+  @PrimaryGeneratedColumn('uuid')
+  _id!: string;
 
-    @Column('varchar', { nullable: false, name: 'author_name' })
-    author: string;
+  @Column('varchar', { nullable: false, name: 'author_name' })
+  author: string;
 
-    @Column('text', { nullable: false, name: 'author_thumbnail' })
-    authorThumbnail: string;
+  @Column('text', { nullable: false, name: 'author_thumbnail' })
+  authorThumbnail: string;
 
-    @Column('text', { nullable: false, name: 'content' })
-    content: string;
+  @Column('text', { nullable: false, name: 'content' })
+  content: string;
 
-    @Column('timestamp', {
-        nullable: false,
-        default: () => 'CURRENT_TIMESTAMP',
-        name: 'created_at',
-    })
-    createdAt!: Date;
+  @Column('timestamp', {
+    nullable: false,
+    default: () => 'CURRENT_TIMESTAMP',
+    name: 'created_at',
+  })
+  createdAt!: Date;
 
-    @ManyToOne(() => Lecture, lecture => lecture.comments)
-    @JoinColumn({name: 'lecture_id'})
-    lecture: Lecture;
+  @ManyToOne(() => Lecture, (lecture) => lecture.comments)
+  @JoinColumn({ name: 'lecture_id' })
+  lecture: Lecture;
+
+  @ManyToOne(() => User, (user) => user.comments)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }

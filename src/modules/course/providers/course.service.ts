@@ -39,7 +39,7 @@ export class CourseService {
     @Inject(forwardRef(() => CourseBookmarkService))
     private readonly bookmarkService: CourseBookmarkService,
     @Inject(forwardRef(() => OrderService))
-    private readonly orderService: OrderService
+    private readonly orderService: OrderService,
   ) {}
 
   async getCourseById(
@@ -60,9 +60,10 @@ export class CourseService {
       const [paidCart, bookmark, paidCourse] = await Promise.all([
         this.cartService.getPaidCart(userId, instance._id),
         this.bookmarkService.getBookmarkById(instance._id, userId),
-        this.orderService.getPaidOrder(userId, instance._id)
+        this.orderService.getPaidOrder(userId, instance._id),
       ]);
-      instance.isPaid = paidCourse?.paymentStatus || paidCart?.data?.status || false;
+      instance.isPaid =
+        paidCourse?.paymentStatus || paidCart?.data?.status || false;
       instance.isAddToCart = paidCart?.data ? true : false;
       instance.isBookmark = bookmark ? true : false;
     }
@@ -256,9 +257,10 @@ export class CourseService {
           const [paidCart, bookmark, paidOrder] = await Promise.all([
             this.cartService.getPaidCart(userId, course._id),
             this.bookmarkService.getBookmarkById(course._id, userId),
-            this.orderService.getPaidOrder(userId, course._id)
+            this.orderService.getPaidOrder(userId, course._id),
           ]);
-          course.isPaid =  paidOrder?.paymentStatus || paidCart?.data?.status || false;
+          course.isPaid =
+            paidOrder?.paymentStatus || paidCart?.data?.status || false;
           course.isAddToCart = paidCart?.data ? true : false;
           course.isBookmark = bookmark ? true : false;
         }
@@ -294,22 +296,22 @@ export class CourseService {
         HttpStatus.NOT_FOUND,
       );
 
-    const paidCourses = await this.orderService.getPaidCourses(userId)
+    const paidCourses = await this.orderService.getPaidCourses(userId);
     const courses: CourseOutput[] = [];
     paidCourses.map((paid) => {
       const detail = paid.orderDetails;
 
       detail.map((item) => {
-        console.log(item)
+        console.log(item);
         const course = item?.cart?.course || item?.course;
         course.isPaid = true;
         courses.push(course);
-      })
-    })
-    
+      });
+    });
+
     const result = plainToInstance(CourseOutput, courses, {
-      excludeExtraneousValues: true
-    })
+      excludeExtraneousValues: true,
+    });
 
     return {
       error: false,

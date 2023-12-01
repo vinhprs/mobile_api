@@ -21,12 +21,11 @@ export class LectureService {
     return lectures;
   }
 
-  async getAll()
-  : Promise<LectureOutput[]> {
+  async getAll(): Promise<LectureOutput[]> {
     const data = await this.lectureRepository.find({});
 
     return plainToInstance(LectureOutput, data, {
-      excludeExtraneousValues: true
+      excludeExtraneousValues: true,
     });
   }
 }

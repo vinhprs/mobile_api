@@ -77,6 +77,6 @@ export class Course {
   })
   cart: Cart[];
 
-  @OneToMany(() => OrderDetail, detail => detail.course)
+  @OneToMany(() => OrderDetail, (detail) => detail.course)
   orderDetails: OrderDetail[];
 }
