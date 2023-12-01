@@ -73,7 +73,7 @@ export class CartService {
     const builder = this.cartRepository.createQueryBuilder('cart');
     builder.leftJoinAndSelect('cart.course', 'course');
     builder.andWhere('cart.user_id = :user_id', { user_id: userId });
-    builder.andWhere('cart.status = TRUE')
+    builder.andWhere('cart.status = TRUE');
 
     const paidCart = await builder.getMany();
 

@@ -26,7 +26,7 @@ export class CourseBookmarkService {
     @Inject(forwardRef(() => CourseService))
     private readonly courseService: CourseService,
     @Inject(forwardRef(() => CartService))
-    private readonly cartService: CartService
+    private readonly cartService: CartService,
   ) {}
 
   async getUserBookmarks(
@@ -47,15 +47,15 @@ export class CourseBookmarkService {
       instance.map(async (item) => {
         const [bookmark, cart] = await Promise.all([
           this.getBookmarkById(item.course._id, userId),
-          this.cartService.getPaidCart(userId, item.course._id)
-        ]) 
+          this.cartService.getPaidCart(userId, item.course._id),
+        ]);
         item.course.isBookmark = bookmark ? true : false;
         item.course.isAddToCart = cart ? true : false;
-      })
-    )
+      }),
+    );
     const result = plainToInstance(BookmarkOuput, instance, {
-      excludeExtraneousValues: true
-    })
+      excludeExtraneousValues: true,
+    });
     return {
       error: false,
       data: result,

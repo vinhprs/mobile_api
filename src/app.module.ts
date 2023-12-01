@@ -124,7 +124,7 @@ import { CommentsModule } from './modules/comments/comments.module';
       {
         path: 'files',
         module: FilesModule,
-      }, 
+      },
       {
         path: 'comments',
         module: CommentsModule,
