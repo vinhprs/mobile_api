@@ -62,6 +62,7 @@ export class CourseService {
         this.bookmarkService.getBookmarkById(instance._id, userId),
         this.orderService.getPaidOrder(userId, instance._id),
       ]);
+      console.log(paidCourse);
       instance.isPaid =
         paidCourse?.paymentStatus || paidCart?.data?.status || false;
       instance.isAddToCart = paidCart?.data ? true : false;

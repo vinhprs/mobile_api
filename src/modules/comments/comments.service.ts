@@ -89,22 +89,23 @@ export class CommentsService {
 
   async getCourseComment(
     courseId: number,
-    query: FilterCommentInput
+    query: FilterCommentInput,
   ): Promise<BaseApiResponse<BasePaginationResponse<CommentOutput>>> {
     const { limit, page } = query;
-    const builder = this.commentRepository.createQueryBuilder('comment')
-    .leftJoinAndSelect('comment.lecture', 'lecture')
-    .leftJoinAndSelect('lecture.section', 'section')
-    .andWhere('section.course_id = :course_id', { course_id: courseId })
+    const builder = this.commentRepository
+      .createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.lecture', 'lecture')
+      .leftJoinAndSelect('lecture.section', 'section')
+      .andWhere('section.course_id = :course_id', { course_id: courseId });
 
-    if(limit) builder.take(limit);
-    if(page) builder.skip((page - 1) * limit);
+    if (limit) builder.take(limit);
+    if (page) builder.skip((page - 1) * limit);
     builder.orderBy('comment.likeCount', 'DESC');
     builder.addOrderBy('comment.createdAt', 'DESC');
 
     const [comments, total] = await builder.getManyAndCount();
     const result = plainToInstance(CommentOutput, comments, {
-      excludeExtraneousValues: true
+      excludeExtraneousValues: true,
     });
 
     return {
@@ -112,10 +113,10 @@ export class CommentsService {
       data: {
         listData: result,
         total,
-        totalPage: Math.ceil(total / limit)
+        totalPage: Math.ceil(total / limit),
       },
       message: MESSAGES.GET_SUCCEED,
-      code: 200
-    }
+      code: 200,
+    };
   }
 }

@@ -1,15 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Lecture } from '../entities';
-import { Repository } from 'typeorm';
-import { CreateLecture, LectureOutput } from '../dto';
 import { plainToInstance } from 'class-transformer';
+import { Response } from 'express';
+import { Repository } from 'typeorm';
+import { MESSAGES } from '../../../common/constants';
+import { FileService } from '../../../modules/files/files.service';
+import { RequestContext } from '../../../shared/request-context/request-context.dto';
+import { CreateLecture, LectureOutput } from '../dto';
+import { Lecture } from '../entities';
 
 @Injectable()
 export class LectureService {
   constructor(
     @InjectRepository(Lecture)
     private readonly lectureRepository: Repository<Lecture>,
+    private readonly fileService: FileService,
   ) {}
 
   create(data: CreateLecture[]): Lecture[] {
@@ -37,5 +42,46 @@ export class LectureService {
     return plainToInstance(LectureOutput, data, {
       excludeExtraneousValues: true,
     });
+  }
+
+  async getLectureVideo(ctx: RequestContext, id: number, res: Response) {
+    const key = `${id}.mp4`;
+    const filesize = await this.fileService.getFileSize(key);
+    if (!filesize)
+      throw new HttpException(
+        {
+          error: true,
+          data: null,
+          message: MESSAGES.NOT_FOUND,
+          code: 404,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+
+    const range = ctx.range;
+    if (range) {
+      const parts = range.replace('bytes=', '').split('-');
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : filesize - 1;
+
+      const chunkSize = end - start + 1;
+      const head = {
+        'Content-Range': `bytes ${start}-${end}/${filesize}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunkSize,
+        'Content-Type': 'video/mp4',
+      };
+      const stream = await this.fileService.getStreamFile(key, start, end);
+      res.writeHead(206, head);
+      stream.pipe(res);
+    } else {
+      const stream = await this.fileService.getStreamFile(key, 0, filesize - 1);
+      const head = {
+        'Content-Range': filesize,
+        'Content-Type': 'video/mp4',
+      };
+      res.writeHead(206, head);
+      stream.pipe(res);
+    }
   }
 }

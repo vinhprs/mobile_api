@@ -132,7 +132,8 @@ export class OrderService {
     const builder = this.orderRepository
       .createQueryBuilder('order')
       .leftJoinAndSelect('order.orderDetails', 'detail')
-      .andWhere('order.user_id = :user_id', { user_id: userId });
+      .andWhere('order.user_id = :user_id', { user_id: userId })
+      .andWhere('order.payment_status = True');
     if (courseId)
       builder.andWhere('detail.course_id = :course_id', {
         course_id: courseId,

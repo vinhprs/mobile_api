@@ -9,4 +9,6 @@ export class RequestContext {
 
   // TODO : Discuss with team if this import is acceptable or if we should move UserAccessTokenClaims to shared.
   public user: UserAccessTokenClaims;
+
+  public range: string | undefined;
 }

@@ -37,6 +37,6 @@ export class Section {
   updatedAt!: Date;
 
   @ManyToOne(() => Course, (course) => course.sections)
-  @JoinColumn({name: 'course_id'})
+  @JoinColumn({ name: 'course_id' })
   course: Course;
 }

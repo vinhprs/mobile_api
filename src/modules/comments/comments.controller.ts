@@ -8,7 +8,7 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
-import { ReqUser } from '../../common';
+import { Public, ReqUser } from '../../common';
 import { BaseApiResponse, BasePaginationResponse } from '../../shared/dtos';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
 import { CommentsService } from './comments.service';
@@ -28,10 +28,11 @@ export class CommentsController {
   }
 
   @Get('/course/:id')
+  @Public()
   @UseInterceptors(ClassSerializerInterceptor)
   async getCourseComment(
     @Param('id') courseId: number,
-    @Query() query: FilterCommentInput
+    @Query() query: FilterCommentInput,
   ): Promise<BaseApiResponse<BasePaginationResponse<CommentOutput>>> {
     return this.commentService.getCourseComment(courseId, query);
   }

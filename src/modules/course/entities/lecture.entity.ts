@@ -49,7 +49,7 @@ export class Lecture {
 
   @OneToMany(() => Comment, (comnent) => comnent.lecture, {
     cascade: ['update', 'remove'],
-    orphanedRowAction: 'delete'
+    orphanedRowAction: 'delete',
   })
   comments: Comment[];
 }

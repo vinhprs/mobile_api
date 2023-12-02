@@ -41,6 +41,10 @@ export declare global {
       VNP_HASH_SECRECT: string;
       VNP_URL: string;
       VNP_RETURN_URL: string;
+      DO_ENDPOINT: string;
+      DO_ACCESS_KEY: string;
+      DO_SECRECT_KEY: string;
+      DO_BUCKET: string;
     }
   }
 

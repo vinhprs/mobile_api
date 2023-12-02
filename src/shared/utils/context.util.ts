@@ -16,8 +16,7 @@ export function createRequestContext(request: Request): RequestContext {
   ctx.ip = request.header(FORWARDED_FOR_TOKEN_HEADER)
     ? request.header(FORWARDED_FOR_TOKEN_HEADER)
     : request.ip;
-  // const user = request.user ? request.user : request.header('user');
-  // If request.user does not exist, we explicitly set it to null.
+  ctx.range = request.headers.range;
   ctx.user = plainToClass(UserAccessTokenClaims, request.user, {
     excludeExtraneousValues: false,
   });

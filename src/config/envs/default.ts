@@ -12,7 +12,7 @@ export const config = {
   jwt: {
     publicKey: Buffer.from(process.env.JWT_PUBLIC, 'base64').toString('utf-8'),
     privateKey: Buffer.from(process.env.JWT_SECRET, 'base64').toString('utf-8'),
-    expiresIn: '1h',
+    expiresIn: '1d',
     refreshExpiresIn: '7d',
   },
   aws_bucket_name: process.env.AWS_BUCKET_NAME,
@@ -27,4 +27,8 @@ export const config = {
   vnp_hash_secrect: process.env.VNP_HASH_SECRECT,
   vnp_url: process.env.VNP_URL,
   vnp_return_url: process.env.VNP_RETURN_URL,
+  do_endpoint: process.env.DO_ENDPOINT,
+  do_access_key: process.env.DO_ACCESS_KEY,
+  do_secret_key: process.env.DO_SECRECT_KEY,
+  do_bucket: process.env.DO_BUCKET,
 };

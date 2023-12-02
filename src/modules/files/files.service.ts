@@ -6,26 +6,31 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
-import { S3 } from 'aws-sdk';
 import { plainToInstance } from 'class-transformer';
 import { BaseApiResponse } from 'src/shared/dtos';
 import { UploadOutput } from './dto';
 import { MESSAGES } from 'src/common/constants';
+import { Readable } from 'stream';
 @Injectable()
 export class FileService implements OnModuleInit {
   constructor(private readonly configService: ConfigService) {}
-  s3: S3;
+  s3: AWS.S3;
   onModuleInit() {
-    AWS.config.region = this.configService.get('aws_region');
-    AWS.config.accessKeyId = this.configService.get('aws_access_key_id');
-    AWS.config.secretAccessKey = this.configService.get('aws_secrect_key');
-    this.s3 = new AWS.S3();
+    this.s3 = new AWS.S3({
+      endpoint: this.configService.get<string>('do_endpoint'),
+      s3ForcePathStyle: true,
+      region: 'sgp1',
+      credentials: {
+        accessKeyId: this.configService.get<string>('do_access_key') || '',
+        secretAccessKey: this.configService.get<string>('do_secret_key') || '',
+      },
+    });
   }
   async uploadFile(
+    type: string,
     identity: number | string,
     file: Express.Multer.File,
   ): Promise<BaseApiResponse<UploadOutput>> {
-    console.log(this.configService.get('aws_secrect_key'));
     if (!file)
       throw new HttpException(
         {
@@ -37,9 +42,9 @@ export class FileService implements OnModuleInit {
         HttpStatus.BAD_REQUEST,
       );
     const uploadParams = {
-      Bucket: this.configService.get('aws_bucket_name') || '',
+      Bucket: this.configService.get('do_bucket') || '',
       Body: file.buffer,
-      Key: `images/${identity}/${file.originalname}`,
+      Key: `${type}/${identity}-${file.originalname}`,
       ACL: 'public-read',
     };
 
@@ -54,5 +59,34 @@ export class FileService implements OnModuleInit {
       message: MESSAGES.UPLOAD_IMAGE_SUCCES,
       code: 200,
     };
+  }
+
+  async getFileSize(key: string): Promise<number | undefined> {
+    const data = await this.s3
+      .headObject({
+        Bucket: 'lectures',
+        Key: key,
+      })
+      .promise();
+
+    return data.ContentLength;
+  }
+
+  async getStreamFile(
+    key: string,
+    start?: number,
+    end?: number,
+  ): Promise<Readable> {
+    const range = `bytes=${start}-${end}`;
+
+    const res = await this.s3
+      .getObject({
+        Key: key,
+        Bucket: 'lectures',
+        Range: range,
+      })
+      .promise();
+    const body = res.Body as Buffer;
+    return Readable.from(Buffer.from(body));
   }
 }

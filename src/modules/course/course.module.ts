@@ -9,12 +9,14 @@ import { CategoryModule } from '../category/category.module';
 import { CartModule } from '../cart/cart.module';
 import { CourseBookmarkModule } from '../course-bookmark/course-bookmark.module';
 import { OrderModule } from '../order/order.module';
+import { FilesModule } from '../files/files.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Course, Section, Lecture]),
     UserModule,
     SubjectsModule,
     CategoryModule,
+    FilesModule,
     forwardRef(() => CartModule),
     forwardRef(() => CourseBookmarkModule),
     forwardRef(() => OrderModule),

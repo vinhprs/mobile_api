@@ -11,7 +11,7 @@
       "name": "@nestjs/swagger",
       "options": { "introspectComments": true }
     }],
-    "assets": ["**/*.proto", "shared/templates/*.hbs"],
+    "assets": ["**/*.proto", "shared/templates/*.hbs", "shared/resource/videos/*.mp4"],
     "watchAssets": true
   }
 }

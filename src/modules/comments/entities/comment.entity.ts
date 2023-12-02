@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({name: 'comment'})
+@Entity({ name: 'comment' })
 export class Comment {
   @PrimaryGeneratedColumn('uuid')
   _id!: string;
@@ -33,7 +33,7 @@ export class Comment {
   createdAt!: Date;
 
   @ManyToOne(() => Lecture, (lecture) => lecture.comments, {
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'lecture_id' })
   lecture: Lecture;

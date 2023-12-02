@@ -46,6 +46,7 @@ export class CourseOutput {
   @Expose()
   categoryId: number;
 
+  @Expose()
   isPublic: boolean;
 
   @Expose()
