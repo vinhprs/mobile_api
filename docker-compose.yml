@@ -24,6 +24,7 @@ services:
       - vhost:/etc/nginx/vhost.d
       - html:/usr/share/nginx/html
       - certs:/etc/nginx/certs:ro
+      - "./my_custom_proxy_settings.conf:/etc/nginx/conf.d/my_custom_proxy_settings.conf"
     ports:
       - "8080:80"
       - "443:443"
