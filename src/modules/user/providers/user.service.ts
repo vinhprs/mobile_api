@@ -3,21 +3,28 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
-import { LoginInput } from '../../../auth/dtos/auth-login-input.dto';
-import { MESSAGES } from '../../../common/constants/common';
-import { BaseApiResponse } from '../../../shared/dtos';
-import { ROLES } from '../../../shared/enums';
 import { Repository } from 'typeorm';
 import {
+  AdminUpdateUserInput,
+  CreateTeacherInput,
+  FilterUserDto,
+  GetUsersOutput,
+} from '../../../admin/dto';
+import {
+  ChangePasswordInput,
   RegisterInput,
   ResetPasswordInput,
   VerifyEmailInput,
 } from '../../../auth/dtos';
+import { LoginInput } from '../../../auth/dtos/auth-login-input.dto';
+import { MESSAGES } from '../../../common/constants/common';
+import { AddressService } from '../../../modules/address/address.service';
+import { CategoryService } from '../../../modules/category/category.service';
+import { BaseApiResponse, BasePaginationResponse } from '../../../shared/dtos';
+import { ROLES } from '../../../shared/enums';
 import { UpdateProfileDto, UpdateUserInput, UserOutputDto } from '../dto';
 import { User } from '../entities';
 import { RoleService } from './role.service';
-import { AddressService } from 'src/modules/address/address.service';
-import { CategoryService } from 'src/modules/category/category.service';
 
 @Injectable()
 export class UserService {
@@ -29,6 +36,70 @@ export class UserService {
     private readonly addressService: AddressService,
     private readonly categoryService: CategoryService,
   ) {}
+
+  public async adminGetUsers(
+    filter: FilterUserDto,
+  ): Promise<BaseApiResponse<BasePaginationResponse<GetUsersOutput>>> {
+    const { limit, page, role } = filter;
+    const builder = this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.roles', 'roles')
+      .andWhere('roles.id != 2');
+
+    if (role)
+      builder.andWhere('roles.role_name = :role_name', { role_name: role });
+    if (page) builder.skip((page - 1) * limit);
+    if (limit) builder.take(limit);
+
+    builder.orderBy('user.createdAt', 'DESC');
+
+    const [users, total] = await builder.getManyAndCount();
+    const result = plainToInstance(GetUsersOutput, users, {
+      excludeExtraneousValues: true,
+    });
+
+    return {
+      error: false,
+      data: {
+        listData: result,
+        total,
+        totalPage: Math.ceil(total / limit),
+      },
+      message: MESSAGES.GET_SUCCEED,
+      code: 200,
+    };
+  }
+
+  public async adminUpdateUser(
+    data: AdminUpdateUserInput,
+  ): Promise<BaseApiResponse<GetUsersOutput>> {
+    const { id } = data;
+    const exist = await this.getUserByUserId(id);
+
+    if (!exist)
+      throw new HttpException(
+        {
+          error: true,
+          data: null,
+          message: MESSAGES.NOT_FOUND,
+          code: 404,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    this.userRepository.merge(exist, data);
+
+    const user = await this.userRepository.save(exist);
+    const result = plainToInstance(GetUsersOutput, user, {
+      excludeExtraneousValues: true,
+    });
+
+    return {
+      error: false,
+      data: result,
+      message: MESSAGES.UPDATE_SUCCEED,
+      code: 200,
+    };
+  }
 
   public async getUserByEmail(email: string): Promise<UserOutputDto> {
     const user = await this.userRepository.findOne({
@@ -66,9 +137,10 @@ export class UserService {
   }
 
   public async create(data: RegisterInput): Promise<User> {
+    const newData = plainToInstance(CreateTeacherInput, data);
     const userExist = await this.userRepository.findOne({
       where: {
-        email: data.email,
+        email: newData.email,
       },
     });
     if (userExist)
@@ -83,11 +155,14 @@ export class UserService {
       );
 
     const hash = bcrypt.hashSync(
-      data.password,
+      newData.password,
       this.config.get('saltRounds') || 7,
     );
-    const normalRole = await this.roleService.getRoleByName(ROLES.STUDENT);
-    if (!normalRole)
+    const role = newData.role
+      ? await this.roleService.getRoleByName(ROLES.TEACHER)
+      : await this.roleService.getRoleByName(ROLES.STUDENT);
+
+    if (!role)
       throw new HttpException(
         {
           error: true,
@@ -98,9 +173,9 @@ export class UserService {
         HttpStatus.BAD_REQUEST,
       );
     return this.userRepository.save({
-      ...data,
+      ...newData,
       password: hash,
-      roles: [normalRole],
+      roles: [role],
     });
   }
 
@@ -201,6 +276,49 @@ export class UserService {
     await this.update(userId, {
       password: hash,
       emailVerifyCode: null,
+    });
+    return {
+      error: false,
+      data: null,
+      message: MESSAGES.UPDATE_SUCCEED,
+      code: 200,
+    };
+  }
+
+  public async changePassword(
+    userId: string,
+    data: ChangePasswordInput,
+  ): Promise<BaseApiResponse<null>> {
+    const { password, newPassword } = data;
+    const user = await this.getUserByUserId(userId);
+    if (!user)
+      throw new HttpException(
+        {
+          error: true,
+          data: null,
+          message: MESSAGES.NOT_FOUND_USER,
+          code: 404,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      throw new HttpException(
+        {
+          error: true,
+          data: null,
+          message: MESSAGES.UNAUTHORIZED,
+          code: 401,
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    const hash = await bcrypt.hash(
+      newPassword,
+      this.config.get('saltRounds') || 7,
+    );
+    await this.update(userId, {
+      password: hash,
     });
     return {
       error: false,

@@ -41,8 +41,6 @@ export class AuthService {
     return plainToInstance(BaseApiResponse<UserOutputDto>, {
       error: false,
       data: {
-        token: jwt.accessToken,
-        refreshToken: jwt.refreshToken,
         infoUser: userOutput,
       },
       message: MESSAGES.CREATED_SUCCEED,
@@ -63,6 +61,17 @@ export class AuthService {
           code: 400,
         },
         HttpStatus.BAD_REQUEST,
+      );
+
+    if (user.isDeleted || user.isDisabled)
+      throw new HttpException(
+        {
+          error: true,
+          data: null,
+          message: MESSAGES.DISABLED_ACCOUNT,
+          code: 401,
+        },
+        HttpStatus.UNAUTHORIZED,
       );
     const jwt = this.generateToken(user);
     await this.userService.update(user._id, {
@@ -229,6 +238,25 @@ export class AuthService {
         subject,
         context,
         MAIL_TEMPLATE.VERIFY_EMAIL_TEMPLATE,
+      )
+      .then(() => {
+        return true;
+      });
+  }
+
+  public sendTeacherAccountEmail(user: User | UserOutputDto, password: string) {
+    const subject = 'Prime Edu - Cung cấp thông tin tài khoản giáo viên';
+    const context = {
+      fullname: user.fullname,
+      email: user.email,
+      password,
+    };
+    this.mailService
+      .sendMail(
+        user.email,
+        subject,
+        context,
+        MAIL_TEMPLATE.TEACHER_ACCOUNT_TEMPLATE,
       )
       .then(() => {
         return true;
