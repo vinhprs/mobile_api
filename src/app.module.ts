@@ -24,6 +24,7 @@ import { CartModule } from './modules/cart/cart.module';
 import { PaymentModule } from './payment/payment.module';
 import { OrderModule } from './modules/order/order.module';
 import { CommentsModule } from './modules/comments/comments.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -129,6 +130,10 @@ import { CommentsModule } from './modules/comments/comments.module';
         path: 'comments',
         module: CommentsModule,
       },
+      {
+        path: 'admin',
+        module: AdminModule,
+      },
     ]),
     UserModule,
     SubjectsModule,
@@ -142,6 +147,7 @@ import { CommentsModule } from './modules/comments/comments.module';
     PaymentModule,
     OrderModule,
     CommentsModule,
+    AdminModule,
   ],
   providers: [
     // Global Guard, Authentication check on all routers

@@ -37,6 +37,7 @@ export const MESSAGES = {
   SENT_EMAIL_TO_RECOVER_PASSWORD: 'Đã gửi mail để khôi phục mật khẩu',
   USERNAME_EXISTS: 'Username đã tồn tại',
   FINISH_EXAM: 'Nộp bài thành công',
+  DISABLED_ACCOUNT: 'Tài khoản của bạn đã bị vô hiệu hóa',
 };
 
 export const VNPAY_MESSAGE = {
@@ -50,4 +51,5 @@ export const MAIL_TEMPLATE = {
   VERIFY_EMAIL_TEMPLATE: 'verify-email',
   FORGOT_PASSWORD_TEMPLATE: 'forgot-password',
   UPDATE_EMAIL_TEMPLATE: 'update-email',
+  TEACHER_ACCOUNT_TEMPLATE: 'teacher-account',
 };

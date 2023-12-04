@@ -13,6 +13,7 @@ import { BaseApiResponse } from '../../shared/dtos';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
 import { AuthService } from '../auth.service';
 import {
+  ChangePasswordInput,
   ForgotPassword,
   RefreshTokenInput,
   RegisterInput,
@@ -95,5 +96,14 @@ export class AuthController {
     @Body() body: ResetPasswordInput,
   ): Promise<BaseApiResponse<null>> {
     return this.userService.resetPassword(body);
+  }
+
+  @Post('change-password')
+  @UseInterceptors(ClassSerializerInterceptor)
+  public async changePassword(
+    @ReqUser() ctx: RequestContext,
+    @Body() body: ChangePasswordInput,
+  ): Promise<BaseApiResponse<null>> {
+    return this.userService.changePassword(ctx.user.id, body);
   }
 }

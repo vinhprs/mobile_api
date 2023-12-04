@@ -59,10 +59,20 @@ export class User {
 
   @Column('boolean', {
     nullable: false,
-    name: 'is_accept_policy',
+    name: 'is_disabled',
     default: false,
   })
-  isAcceptPolicy!: boolean;
+  isDisabled!: boolean;
+
+  @Column('boolean', {
+    nullable: false,
+    name: 'is_deteled',
+    default: false,
+  })
+  isDeleted!: boolean;
+
+  @Column('text', { nullable: true, name: 'memo' })
+  memo: string;
 
   @Column('varchar', { nullable: true, name: 'email_verify_code', length: 255 })
   emailVerifyCode?: string | null;
