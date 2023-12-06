@@ -50,7 +50,7 @@ export class CourseBookmarkService {
           this.cartService.getPaidCart(userId, item.course._id),
         ]);
         item.course.isBookmark = bookmark ? true : false;
-        item.course.isAddToCart = cart ? true : false;
+        item.course.isAddToCart = cart.data ? true : false;
       }),
     );
     const result = plainToInstance(BookmarkOuput, instance, {
