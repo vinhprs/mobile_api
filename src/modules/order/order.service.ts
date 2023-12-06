@@ -59,10 +59,13 @@ export class OrderService {
     await this.orderRepository.save(order);
   }
 
-  async getOrderById(id: number): Promise<BaseApiResponse<OrderOutput>> {
-    const order = await this.orderRepository.findOne({
-      where: { _id: id },
-    });
+  async getOrderById(id: number)
+  : Promise<BaseApiResponse<OrderOutput>> {
+    const order = await this.orderRepository.createQueryBuilder('order')
+    .leftJoinAndSelect('order.orderDetails', 'detail')
+    .leftJoinAndSelect('detail.course', 'course')
+    .andWhere('order._id = :_id', { _id: id })
+    .getOne();
 
     const result = plainToInstance(OrderOutput, order, {
       excludeExtraneousValues: true,
