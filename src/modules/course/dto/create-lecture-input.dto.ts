@@ -25,4 +25,9 @@ export class CreateLecture {
   @IsNotEmpty()
   @IsString()
   url: string;
+
+  @Type(() => Number)
+  @IsNumber()
+  @IsOptional()
+  examId: number;
 }

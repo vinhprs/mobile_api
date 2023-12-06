@@ -45,7 +45,6 @@ export class QuestionService {
           }
         } else {
           const newQuestion = this.questionRepository.create(question);
-          console.log(newQuestion);
           bulkQuestions.push(newQuestion);
         }
       }),

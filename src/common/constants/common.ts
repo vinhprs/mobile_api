@@ -47,9 +47,20 @@ export const VNPAY_MESSAGE = {
   PAYMENT_SUCCESS: 'Thanh toán thành công',
 };
 
+export const VNPAY_RESPONSE_CODE = {
+  CANCLE_TRANSACTION: '24',
+  TRANSACTION_SUCCESS: '00',
+  INVALID_SIGNED: '70'
+}
+
 export const MAIL_TEMPLATE = {
   VERIFY_EMAIL_TEMPLATE: 'verify-email',
   FORGOT_PASSWORD_TEMPLATE: 'forgot-password',
   UPDATE_EMAIL_TEMPLATE: 'update-email',
   TEACHER_ACCOUNT_TEMPLATE: 'teacher-account',
 };
+
+export const VIEW_TEMPLATE = {
+  PAYMENT_SUCCESS: 'payment-success',
+  CANCLE_TRANSACTION: 'cancle-transaction'
+}

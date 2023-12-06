@@ -62,7 +62,6 @@ export class CourseService {
         this.bookmarkService.getBookmarkById(instance._id, userId),
         this.orderService.getPaidOrder(userId, instance._id),
       ]);
-      console.log(paidCourse);
       instance.isPaid =
         paidCourse?.paymentStatus || paidCart?.data?.status || false;
       instance.isAddToCart = paidCart?.data ? true : false;
@@ -303,7 +302,6 @@ export class CourseService {
       const detail = paid.orderDetails;
 
       detail.map((item) => {
-        console.log(item);
         const course = item?.cart?.course || item?.course;
         course.isPaid = true;
         courses.push(course);

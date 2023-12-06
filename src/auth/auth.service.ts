@@ -42,6 +42,8 @@ export class AuthService {
       error: false,
       data: {
         infoUser: userOutput,
+        token: jwt.accessToken,
+        refreshToken: jwt.refreshToken,
       },
       message: MESSAGES.CREATED_SUCCEED,
       code: 200,

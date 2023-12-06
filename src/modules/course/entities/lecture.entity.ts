@@ -1,13 +1,13 @@
-import { Comment } from '../../../modules/comments/entities/comment.entity';
-import { Section } from '.';
-import { LECTURE_TYPE } from '../../../shared/enums';
 import {
   Column,
   Entity,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
+import { Section } from '.';
+import { Comment } from '../../../modules/comments/entities/comment.entity';
+import { LECTURE_TYPE } from '../../../shared/enums';
 
 @Entity()
 export class Lecture {
@@ -46,6 +46,9 @@ export class Lecture {
 
   @ManyToOne(() => Section, (section) => section.lectures)
   section: Section;
+  
+  @Column('int', { nullable: true, name: 'exam_id' })
+  examId: number;
 
   @OneToMany(() => Comment, (comnent) => comnent.lecture, {
     cascade: ['update', 'remove'],
