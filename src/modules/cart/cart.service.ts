@@ -57,7 +57,7 @@ export class CartService {
       .andWhere('cart.course_id = :course_id', { course_id: courseId })
       .andWhere('cart.user_id = :user_id', { user_id: userId })
       .getOne();
-
+    
     const result = plainToInstance(CartOutput, cart, {
       excludeExtraneousValues: true,
     });

@@ -1,6 +1,7 @@
 import { Expose, Type } from 'class-transformer';
 import { PAYMENT_METHOD } from '../../../shared/enums';
 import { OrderDetailOutput } from './order-detail-output.dto';
+import { UserOutputDto } from '../../../modules/user/dto';
 
 export class OrderOutput {
   @Expose()
@@ -18,4 +19,8 @@ export class OrderOutput {
   @Expose()
   @Type(() => OrderDetailOutput)
   orderDetails: OrderDetailOutput[];
+
+  @Expose()
+  @Type(() => UserOutputDto)
+  user: UserOutputDto;
 }

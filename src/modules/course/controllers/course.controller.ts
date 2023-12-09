@@ -17,10 +17,12 @@ import { CourseOutput } from '../dto';
 import { CreateCourseDto } from '../dto/create-course.dto';
 import {
   FilterCourseDto,
+  FilterCourseParticipants,
   TeacherFilterCourses,
 } from '../dto/filter-course.dto';
 import { PublicCourseInput } from '../dto/public-course-input.dto';
 import { CourseService } from '../providers';
+import { UserOutputDto } from 'src/modules/user/dto';
 
 @Controller('')
 export class CourseController {
@@ -74,7 +76,7 @@ export class CourseController {
     return this.courseService.filterCourses(ctx?.user?.id, filter);
   }
 
-  @Get('/:id')
+  @Get('/detail/:id')
   @Public()
   @UseInterceptors(ClassSerializerInterceptor)
   async getCourseById(
@@ -83,5 +85,13 @@ export class CourseController {
   ): Promise<BaseApiResponse<CourseOutput>> {
     const userId = req?.user?.id;
     return this.courseService.getCourseById(id, userId);
+  }
+
+  @Get('/participants')
+  @UseInterceptors(ClassSerializerInterceptor)
+  async getParticipants(
+    @Query() filter: FilterCourseParticipants
+  ): Promise<BaseApiResponse<BasePaginationResponse<UserOutputDto>>> {
+    return this.courseService.getCourseParticipants(filter);
   }
 }

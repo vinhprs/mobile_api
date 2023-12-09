@@ -14,6 +14,7 @@ import { BaseApiResponse, BasePaginationResponse } from '../../../shared/dtos';
 import { CourseOutput, CreateCourseDto } from '../dto';
 import {
   FilterCourseDto,
+  FilterCourseParticipants,
   TeacherFilterCourses,
 } from '../dto/filter-course.dto';
 import { Course } from '../entities';
@@ -24,6 +25,7 @@ import { PublicCourseInput } from '../dto/public-course-input.dto';
 import { CartService } from '../../../modules/cart/cart.service';
 import { CourseBookmarkService } from '../../../modules/course-bookmark/course-bookmark.service';
 import { OrderService } from '../../../modules/order/order.service';
+import { UserOutputDto } from '../../../modules/user/dto';
 
 @Injectable()
 export class CourseService {
@@ -318,5 +320,13 @@ export class CourseService {
       message: MESSAGES.GET_SUCCEED,
       code: 200,
     };
+  }
+
+  async getCourseParticipants(
+    filter: FilterCourseParticipants
+  ): Promise<BaseApiResponse<BasePaginationResponse<UserOutputDto>>> {
+    const result = await this.orderService.getCourseParticipants(filter);
+
+    return result;
   }
 }
