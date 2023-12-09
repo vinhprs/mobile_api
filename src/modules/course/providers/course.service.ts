@@ -323,7 +323,7 @@ export class CourseService {
   }
 
   async getCourseParticipants(
-    filter: FilterCourseParticipants
+    filter: FilterCourseParticipants,
   ): Promise<BaseApiResponse<BasePaginationResponse<UserOutputDto>>> {
     const result = await this.orderService.getCourseParticipants(filter);
 

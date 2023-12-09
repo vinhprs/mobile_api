@@ -34,29 +34,24 @@ export class PaymentController {
   @Public()
   async vnpayReturn(
     @Query() query: VnpayPaymentUrlDto,
-    @Res() res: Response
+    @Res() res: Response,
   ): Promise<void> {
     const transOutput = await this.paymentService.getPaymentStatus(query);
     const status = transOutput.status;
-    switch(status) {
+    switch (status) {
       case VNPAY_RESPONSE_CODE.CANCLE_TRANSACTION:
-        return res.render(
-          VIEW_TEMPLATE.CANCLE_TRANSACTION,
-        )
+        return res.render(VIEW_TEMPLATE.CANCLE_TRANSACTION);
 
       case VNPAY_RESPONSE_CODE.TRANSACTION_SUCCESS:
-        return res.render(
-          VIEW_TEMPLATE.PAYMENT_SUCCESS,
-          { courses: transOutput.courses }
-        )
+        return res.render(VIEW_TEMPLATE.PAYMENT_SUCCESS, {
+          courses: transOutput.courses,
+        });
     }
-
   }
 
   @Get('/vnpay_ipn')
   @Public()
-  webHook(@Query() query: VnpayPaymentUrlDto)
-  : Promise<void> {   
+  webHook(@Query() query: VnpayPaymentUrlDto): Promise<void> {
     return this.paymentService.webHook(query);
   }
 }

@@ -33,8 +33,8 @@ async function bootstrap(): Promise<string> {
     layoutsDir: join(__dirname, './shared/templates'),
     defaultLayout: 'payment-success',
     extname: 'hbs',
-    helpers
-  })
+    helpers,
+  });
   app.engine('hbs', handlebars.engine);
   app.setViewEngine('hbs');
 

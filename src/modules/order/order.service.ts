@@ -61,15 +61,15 @@ export class OrderService {
     await this.orderRepository.save(order);
   }
 
-  async getOrderById(id: number)
-  : Promise<BaseApiResponse<OrderOutput>> {
-    const order = await this.orderRepository.createQueryBuilder('order')
-    .leftJoinAndSelect('order.orderDetails', 'detail')
-    .leftJoinAndSelect('detail.course', 'course')
-    .leftJoinAndSelect('detail.cart', 'cart')
-    .leftJoinAndSelect('cart.course', 'cart_course')
-    .andWhere('order._id = :_id', { _id: id })
-    .getOne();
+  async getOrderById(id: number): Promise<BaseApiResponse<OrderOutput>> {
+    const order = await this.orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.orderDetails', 'detail')
+      .leftJoinAndSelect('detail.course', 'course')
+      .leftJoinAndSelect('detail.cart', 'cart')
+      .leftJoinAndSelect('cart.course', 'cart_course')
+      .andWhere('order._id = :_id', { _id: id })
+      .getOne();
 
     const result = plainToInstance(OrderOutput, order, {
       excludeExtraneousValues: true,
@@ -170,27 +170,29 @@ export class OrderService {
   }
 
   async getCourseParticipants(
-    filter: FilterCourseParticipants
+    filter: FilterCourseParticipants,
   ): Promise<BaseApiResponse<BasePaginationResponse<UserOutputDto>>> {
-    const { courseId, page, limit  } = filter;
-    const builder = this.orderRepository.createQueryBuilder('order')
-    .leftJoinAndSelect('order.orderDetails', 'detail')
-    .leftJoinAndSelect('detail.course', 'course')
-    .leftJoinAndSelect('detail.cart', 'cart')
-    .leftJoinAndSelect('cart.course', 'cart_course')
-    .leftJoinAndSelect('order.user', 'user')
-    .andWhere('order.payment_status = TRUE')
-    .andWhere('(course._id = :_id OR cart_course._id = :_id)', { _id: courseId })
-    
+    const { courseId, page, limit } = filter;
+    const builder = this.orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.orderDetails', 'detail')
+      .leftJoinAndSelect('detail.course', 'course')
+      .leftJoinAndSelect('detail.cart', 'cart')
+      .leftJoinAndSelect('cart.course', 'cart_course')
+      .leftJoinAndSelect('order.user', 'user')
+      .andWhere('order.payment_status = TRUE')
+      .andWhere('(course._id = :_id OR cart_course._id = :_id)', {
+        _id: courseId,
+      });
+
     if (page) builder.skip((page - 1) * limit);
-    if(limit) builder.take(limit);
+    if (limit) builder.take(limit);
     const [order, total] = await builder.getManyAndCount();
     const orderInstance = plainToInstance(OrderOutput, order, {
-      excludeExtraneousValues: true
-    })
-    const result = plainToInstance(UserOutputDto, orderInstance, {
+      excludeExtraneousValues: true,
     });
-    
+    const result = plainToInstance(UserOutputDto, orderInstance, {});
+
     return {
       error: false,
       data: {
@@ -199,8 +201,7 @@ export class OrderService {
         totalPage: Math.ceil(total / limit),
       },
       message: MESSAGES.GET_SUCCEED,
-      code: 200
-    }
+      code: 200,
+    };
   }
-
 }

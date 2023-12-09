@@ -6,3 +6,4 @@ export * from './exam-output.dto';
 export * from './take-exam-input.dto';
 export * from './take-exam-output.dto';
 export * from './question-output.dto';
+export * from './filter-exam-input.dto';

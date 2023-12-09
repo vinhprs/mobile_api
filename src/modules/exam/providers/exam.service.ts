@@ -1,8 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
 import { MESSAGES } from '../../../common/constants';
+import { UserService } from '../../../modules/user/providers';
 import { BaseApiResponse, BasePaginationResponse } from '../../../shared/dtos';
+import { groupRankingByUser } from '../../../shared/utils/array.util';
+import { correctionResult } from '../../../shared/utils/correction.util';
 import {
   CreateExamDto,
   ExamDetailOutput,
@@ -12,11 +16,12 @@ import {
   TakeExamOutput,
   UpdateExamDto,
 } from '../dto';
+import {
+  ExamRankingFilter,
+  ExamRankingOutput,
+} from '../dto/exam-rank-filter.dto';
 import { Exam, UserExam } from '../entities';
 import { QuestionService } from './question.service';
-import { plainToInstance } from 'class-transformer';
-import { UserService } from '../../../modules/user/providers';
-import { correctionResult } from '../../../shared/utils/correction.util';
 
 @Injectable()
 export class ExamService {
@@ -213,6 +218,40 @@ export class ExamService {
       error: false,
       data: result,
       message: MESSAGES.FINISH_EXAM,
+      code: 200,
+    };
+  }
+
+  async getExamRanking(
+    query: ExamRankingFilter,
+    userId: string,
+  ): Promise<BaseApiResponse<BasePaginationResponse<ExamRankingOutput>>> {
+    console.log(userId);
+    const { examId, page, limit } = query;
+    const builder = this.userExamRepository
+      .createQueryBuilder('result')
+      .leftJoinAndSelect('result.user', 'user')
+      .andWhere('result.exam_id = :exam_id', { exam_id: examId });
+
+    if (page) builder.skip((page - 1) * limit);
+    if (limit) builder.take(limit);
+    builder.addOrderBy('result.score', 'DESC');
+    builder.addOrderBy('result.completeTime');
+    const exam = await builder.getMany();
+
+    const instance = plainToInstance(ExamRankingOutput, exam, {
+      excludeExtraneousValues: true,
+    });
+    const groupedRanking = groupRankingByUser(instance);
+    const result = Object.values(groupedRanking);
+    return {
+      error: false,
+      data: {
+        listData: result,
+        total: result.length,
+        totalPage: Math.ceil(result.length / limit),
+      },
+      message: MESSAGES.GET_SUCCEED,
       code: 200,
     };
   }
