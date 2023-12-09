@@ -45,7 +45,7 @@ export class PaymentService {
   }
 
   async getPaymentStatus(
-    query: VnpayPaymentUrlDto
+    query: VnpayPaymentUrlDto,
   ): Promise<TransactionOutput> {
     const secureHash = query.vnp_SecureHash;
     const secretKey = this.configService.get('vnp_hash_secrect');
@@ -59,9 +59,9 @@ export class PaymentService {
     // payment status
     const responseCode = query.vnp_ResponseCode;
 
-    if(secureHash !== signed)
+    if (secureHash !== signed)
       return plainToInstance(TransactionOutput, {
-        status: responseCode
+        status: responseCode,
       });
 
     const orderId = +query.vnp_TxnRef;
@@ -69,17 +69,19 @@ export class PaymentService {
     const courses = order.data.orderDetails.reduce((accummulator, current) => {
       const coruse = current.course || current.cart?.course;
       return [...accummulator, coruse];
-    }, [] as CourseOutput[])
+    }, [] as CourseOutput[]);
 
-    return plainToInstance(TransactionOutput, {
-      status: responseCode,
-      courses
-    }, { excludeExtraneousValues: true });
+    return plainToInstance(
+      TransactionOutput,
+      {
+        status: responseCode,
+        courses,
+      },
+      { excludeExtraneousValues: true },
+    );
   }
 
-  async webHook(
-    query: VnpayPaymentUrlDto
-  ): Promise<void> {
+  async webHook(query: VnpayPaymentUrlDto): Promise<void> {
     const secureHash = query.vnp_SecureHash;
     const secretKey = this.configService.get('vnp_hash_secrect');
     delete query.vnp_SecureHash;

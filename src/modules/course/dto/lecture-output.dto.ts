@@ -12,6 +12,9 @@ export class LectureOutput {
   lectureType: LECTURE_TYPE;
 
   @Expose()
+  examId: number;
+
+  @Expose()
   duration: number;
 
   @Expose()

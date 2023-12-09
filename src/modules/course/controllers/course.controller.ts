@@ -90,7 +90,7 @@ export class CourseController {
   @Get('/participants')
   @UseInterceptors(ClassSerializerInterceptor)
   async getParticipants(
-    @Query() filter: FilterCourseParticipants
+    @Query() filter: FilterCourseParticipants,
   ): Promise<BaseApiResponse<BasePaginationResponse<UserOutputDto>>> {
     return this.courseService.getCourseParticipants(filter);
   }

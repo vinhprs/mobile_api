@@ -1,4 +1,4 @@
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 import { QuestionCorrectionOutput } from './question-output.dto';
 
 export class TakeExamOutput {
@@ -27,6 +27,7 @@ export class TakeExamOutput {
   time: number;
 
   @Expose()
+  @Transform((value) => Math.ceil(value.value / 60), { toClassOnly: true })
   completeTime: number;
 
   @Expose()

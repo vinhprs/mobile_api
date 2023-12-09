@@ -50,8 +50,8 @@ export const VNPAY_MESSAGE = {
 export const VNPAY_RESPONSE_CODE = {
   CANCLE_TRANSACTION: '24',
   TRANSACTION_SUCCESS: '00',
-  INVALID_SIGNED: '70'
-}
+  INVALID_SIGNED: '70',
+};
 
 export const MAIL_TEMPLATE = {
   VERIFY_EMAIL_TEMPLATE: 'verify-email',
@@ -62,5 +62,5 @@ export const MAIL_TEMPLATE = {
 
 export const VIEW_TEMPLATE = {
   PAYMENT_SUCCESS: 'payment-success',
-  CANCLE_TRANSACTION: 'cancle-transaction'
-}
+  CANCLE_TRANSACTION: 'cancle-transaction',
+};

@@ -1,5 +1,11 @@
 import { Transform, Type } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { PaginationParamsDto } from '../../../shared/dtos';
 
 export class FilterCourseDto extends PaginationParamsDto {

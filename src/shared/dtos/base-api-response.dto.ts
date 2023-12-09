@@ -24,3 +24,14 @@ export class BasePaginationResponse<T> {
   @Expose()
   totalPage: number;
 }
+
+export class DictionaryPaginationResponse<T> {
+  @Expose()
+  data: T;
+
+  @Expose()
+  total: number;
+
+  @Expose()
+  totalPage: number;
+}

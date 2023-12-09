@@ -3,7 +3,7 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Section } from '.';
 import { Comment } from '../../../modules/comments/entities/comment.entity';
@@ -46,7 +46,7 @@ export class Lecture {
 
   @ManyToOne(() => Section, (section) => section.lectures)
   section: Section;
-  
+
   @Column('int', { nullable: true, name: 'exam_id' })
   examId: number;
 

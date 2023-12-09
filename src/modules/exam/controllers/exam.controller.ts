@@ -23,6 +23,10 @@ import {
   TakeExamOutput,
   UpdateExamDto,
 } from '../dto';
+import {
+  ExamRankingFilter,
+  ExamRankingOutput,
+} from '../dto/exam-rank-filter.dto';
 import { ExamService } from '../providers';
 
 @Controller('')
@@ -47,6 +51,16 @@ export class ExamController {
     @Query() filter: FilterExamDto,
   ): Promise<BaseApiResponse<BasePaginationResponse<FilterExamOutput>>> {
     return this.examService.teacherGetExam(ctx.user.id, filter);
+  }
+
+  @Get('/ranking')
+  @UseInterceptors(ClassSerializerInterceptor)
+  async getExamRanking(
+    @ReqUser() ctx: RequestContext,
+    @Query() query: ExamRankingFilter,
+  ): Promise<BaseApiResponse<BasePaginationResponse<ExamRankingOutput>>> {
+    const userId = ctx.user.id;
+    return this.examService.getExamRanking(query, userId);
   }
 
   @Get('/:id')
