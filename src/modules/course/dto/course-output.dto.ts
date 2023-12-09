@@ -69,6 +69,9 @@ export class CourseOutput {
   sections: SectionOutput[];
 
   @Expose()
+  examId: number;
+
+  @Expose()
   @ApiProperty()
   createdAt!: Date;
 }

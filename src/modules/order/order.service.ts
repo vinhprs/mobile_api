@@ -6,17 +6,19 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Order, OrderDetail } from './entities';
-import { Repository } from 'typeorm';
-import { CartService } from '../cart/cart.service';
-import { CartInfoDto, CheckoutCartDto } from '../../payment/dto';
-import { OrderOutput } from './dto/order-output.dto';
 import { plainToInstance } from 'class-transformer';
-import { RequestContext } from '../../shared/request-context/request-context.dto';
-import { UserService } from '../user/providers';
+import { Repository } from 'typeorm';
 import { MESSAGES } from '../../common/constants';
-import { BaseApiResponse } from '../../shared/dtos';
+import { CartInfoDto, CheckoutCartDto } from '../../payment/dto';
+import { BaseApiResponse, BasePaginationResponse } from '../../shared/dtos';
+import { RequestContext } from '../../shared/request-context/request-context.dto';
+import { CartService } from '../cart/cart.service';
 import { CourseService } from '../course/providers';
+import { UserService } from '../user/providers';
+import { OrderOutput } from './dto/order-output.dto';
+import { Order, OrderDetail } from './entities';
+import { FilterCourseParticipants } from '../course/dto/filter-course.dto';
+import { UserOutputDto } from '../user/dto';
 
 @Injectable()
 export class OrderService {
@@ -64,6 +66,8 @@ export class OrderService {
     const order = await this.orderRepository.createQueryBuilder('order')
     .leftJoinAndSelect('order.orderDetails', 'detail')
     .leftJoinAndSelect('detail.course', 'course')
+    .leftJoinAndSelect('detail.cart', 'cart')
+    .leftJoinAndSelect('cart.course', 'cart_course')
     .andWhere('order._id = :_id', { _id: id })
     .getOne();
 
@@ -164,4 +168,39 @@ export class OrderService {
       excludeExtraneousValues: true,
     });
   }
+
+  async getCourseParticipants(
+    filter: FilterCourseParticipants
+  ): Promise<BaseApiResponse<BasePaginationResponse<UserOutputDto>>> {
+    const { courseId, page, limit  } = filter;
+    const builder = this.orderRepository.createQueryBuilder('order')
+    .leftJoinAndSelect('order.orderDetails', 'detail')
+    .leftJoinAndSelect('detail.course', 'course')
+    .leftJoinAndSelect('detail.cart', 'cart')
+    .leftJoinAndSelect('cart.course', 'cart_course')
+    .leftJoinAndSelect('order.user', 'user')
+    .andWhere('order.payment_status = TRUE')
+    .andWhere('(course._id = :_id OR cart_course._id = :_id)', { _id: courseId })
+    
+    if (page) builder.skip((page - 1) * limit);
+    if(limit) builder.take(limit);
+    const [order, total] = await builder.getManyAndCount();
+    const orderInstance = plainToInstance(OrderOutput, order, {
+      excludeExtraneousValues: true
+    })
+    const result = plainToInstance(UserOutputDto, orderInstance, {
+    });
+    
+    return {
+      error: false,
+      data: {
+        listData: result,
+        total,
+        totalPage: Math.ceil(total / limit),
+      },
+      message: MESSAGES.GET_SUCCEED,
+      code: 200
+    }
+  }
+
 }

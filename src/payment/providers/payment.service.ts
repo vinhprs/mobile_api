@@ -67,7 +67,7 @@ export class PaymentService {
     const orderId = +query.vnp_TxnRef;
     const order = await this.orderService.getOrderById(orderId);
     const courses = order.data.orderDetails.reduce((accummulator, current) => {
-      const coruse = current.course;
+      const coruse = current.course || current.cart?.course;
       return [...accummulator, coruse];
     }, [] as CourseOutput[])
 
