@@ -26,6 +26,7 @@ import { CartService } from '../../../modules/cart/cart.service';
 import { CourseBookmarkService } from '../../../modules/course-bookmark/course-bookmark.service';
 import { OrderService } from '../../../modules/order/order.service';
 import { UserOutputDto } from '../../../modules/user/dto';
+import { OrderOutput } from 'src/modules/order/dto';
 
 @Injectable()
 export class CourseService {
@@ -43,6 +44,13 @@ export class CourseService {
     @Inject(forwardRef(() => OrderService))
     private readonly orderService: OrderService,
   ) {}
+
+  async checkIsPaidOrder(
+    userId: string,
+    courseId: number
+  ): Promise<OrderOutput> {
+    return this.orderService.getPaidOrder(userId, courseId);
+  }
 
   async getCourseById(
     _id: number,

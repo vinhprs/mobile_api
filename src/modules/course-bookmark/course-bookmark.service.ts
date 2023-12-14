@@ -45,12 +45,14 @@ export class CourseBookmarkService {
 
     await Promise.all(
       instance.map(async (item) => {
-        const [bookmark, cart] = await Promise.all([
+        const [bookmark, cart, paidCourse] = await Promise.all([
           this.getBookmarkById(item.course._id, userId),
           this.cartService.getPaidCart(userId, item.course._id),
+          this.courseService.checkIsPaidOrder(userId, item.course._id)
         ]);
         item.course.isBookmark = bookmark ? true : false;
         item.course.isAddToCart = cart.data ? true : false;
+        item.course.isPaid = paidCourse?.paymentStatus || cart?.data?.status || false;
       }),
     );
     const result = plainToInstance(BookmarkOuput, instance, {
