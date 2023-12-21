@@ -19,4 +19,7 @@ export class LectureOutput {
 
   @Expose()
   url: string;
+
+  @Expose()
+  slug: string;
 }

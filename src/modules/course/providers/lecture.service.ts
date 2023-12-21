@@ -44,8 +44,12 @@ export class LectureService {
     });
   }
 
-  async getLectureVideo(ctx: RequestContext, id: number, res: Response) {
-    const key = `${id}.mp4`;
+  async getLectureVideo(
+    ctx: RequestContext, 
+    slug: string, 
+    res: Response
+  ): Promise<void> {
+    const key = `${slug}.mp4`;
     const filesize = await this.fileService.getFileSize(key);
     if (!filesize)
       throw new HttpException(

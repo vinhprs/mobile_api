@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Post,
   UploadedFile,
@@ -22,5 +23,14 @@ export class FilesController {
     @ReqUser() ctx: RequestContext,
   ): Promise<BaseApiResponse<UploadOutput>> {
     return this.filesService.uploadFile('images', ctx.user.id, file);
+  }
+
+  @Post('/upload-video')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadVideo(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() slug: string
+  ): Promise<BaseApiResponse<UploadOutput>> {
+    return this.filesService.uploadVideo(slug , file);
   }
 }

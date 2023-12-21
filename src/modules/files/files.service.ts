@@ -61,6 +61,40 @@ export class FileService implements OnModuleInit {
     };
   }
 
+  async uploadVideo(
+    key: string,
+    file: Express.Multer.File,
+  ): Promise<BaseApiResponse<UploadOutput>> {
+    if (!file)
+      throw new HttpException(
+        {
+          error: true,
+          data: null,
+          message: MESSAGES.NOT_FOUND,
+          code: 400,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    const uploadParams = {
+      Bucket: 'lectures',
+      Body: file.buffer,
+      Key: key,
+      ACL: 'public-read',
+    };
+
+    const uploadResult = await this.s3.upload(uploadParams).promise();
+    const result = plainToInstance(UploadOutput, {
+      key: uploadResult.Key,
+      url: uploadResult.Location,
+    });
+    return {
+      error: false,
+      data: result,
+      message: MESSAGES.UPLOAD_IMAGE_SUCCES,
+      code: 200,
+    };
+  }
+
   async getFileSize(key: string): Promise<number | undefined> {
     const data = await this.s3
       .headObject({

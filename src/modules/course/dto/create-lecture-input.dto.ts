@@ -22,9 +22,13 @@ export class CreateLecture {
   @IsOptional()
   duration: number;
 
-  @IsNotEmpty()
   @IsString()
+  @IsOptional()
   url: string;
+
+  @IsString()
+  @IsNotEmpty()
+  slug: string;
 
   @Type(() => Number)
   @IsNumber()

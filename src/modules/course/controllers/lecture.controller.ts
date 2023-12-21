@@ -15,14 +15,14 @@ import { Response } from 'express';
 export class LectureController {
   constructor(private readonly lectureService: LectureService) {}
 
-  @Get('/lecture/:id')
+  @Get('/lecture/:slug')
   @Public()
   @UseInterceptors(ClassSerializerInterceptor)
   async getLectureVideo(
     @ReqUser() ctx: RequestContext,
-    @Param('id') id: number,
+    @Param('slug') slug: string,
     @Res() res: Response,
   ): Promise<void> {
-    return this.lectureService.getLectureVideo(ctx, id, res);
+    return this.lectureService.getLectureVideo(ctx, slug, res);
   }
 }

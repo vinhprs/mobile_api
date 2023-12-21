@@ -27,8 +27,11 @@ export class Lecture {
   @Column('int', { nullable: true, name: 'duration' })
   duration: number;
 
-  @Column('varchar', { nullable: false, name: 'url' })
+  @Column('varchar', { nullable: true, name: 'url' })
   url: string;
+
+  @Column('varchar', { nullable: true, name: 'slug', unique: true })
+  slug: string;
 
   @Column('timestamp', {
     nullable: false,
