@@ -9,7 +9,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ReqUser } from '../../common';
 import { BaseApiResponse } from '../../shared/dtos';
 import { RequestContext } from '../../shared/request-context/request-context.dto';
-import { UploadOutput } from './dto';
+import { UploadOutput, UploadVideoInput } from './dto';
 import { FileService } from './files.service';
 
 @Controller('')
@@ -29,8 +29,8 @@ export class FilesController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadVideo(
     @UploadedFile() file: Express.Multer.File,
-    @Body() slug: string
+    @Body() data: UploadVideoInput
   ): Promise<BaseApiResponse<UploadOutput>> {
-    return this.filesService.uploadVideo(slug , file);
+    return this.filesService.uploadVideo(data , file);
   }
 }

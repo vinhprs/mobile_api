@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
 import { plainToInstance } from 'class-transformer';
 import { BaseApiResponse } from 'src/shared/dtos';
-import { UploadOutput } from './dto';
+import { UploadOutput, UploadVideoInput } from './dto';
 import { MESSAGES } from 'src/common/constants';
 import { Readable } from 'stream';
 @Injectable()
@@ -62,7 +62,7 @@ export class FileService implements OnModuleInit {
   }
 
   async uploadVideo(
-    key: string,
+    data: UploadVideoInput,
     file: Express.Multer.File,
   ): Promise<BaseApiResponse<UploadOutput>> {
     if (!file)
@@ -78,14 +78,15 @@ export class FileService implements OnModuleInit {
     const uploadParams = {
       Bucket: 'lectures',
       Body: file.buffer,
-      Key: key,
+      Key: data.slug,
       ACL: 'public-read',
     };
 
     const uploadResult = await this.s3.upload(uploadParams).promise();
+    console.log(uploadResult)
     const result = plainToInstance(UploadOutput, {
       key: uploadResult.Key,
-      url: uploadResult.Location,
+      url: `https://prime-edu.sgp1.cdn.digitaloceanspaces.com/lectures/${data.slug}`,
     });
     return {
       error: false,
