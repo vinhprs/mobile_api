@@ -31,7 +31,7 @@ async function bootstrap(): Promise<string> {
   app.setBaseViewsDir(join(__dirname, './shared/templates'));
   const handlebars = hbs.create({
     layoutsDir: join(__dirname, './shared/templates'),
-    defaultLayout: 'payment-success',
+    defaultLayout: false,
     extname: 'hbs',
     helpers,
   });

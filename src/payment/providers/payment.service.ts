@@ -70,7 +70,6 @@ export class PaymentService {
       const coruse = current.course || current.cart?.course;
       return [...accummulator, coruse];
     }, [] as CourseOutput[]);
-
     return plainToInstance(
       TransactionOutput,
       {
