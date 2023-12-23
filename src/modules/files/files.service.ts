@@ -78,15 +78,14 @@ export class FileService implements OnModuleInit {
     const uploadParams = {
       Bucket: 'lectures',
       Body: file.buffer,
-      Key: data.slug,
+      Key: `${data.slug}.mp4`,
       ACL: 'public-read',
     };
 
     const uploadResult = await this.s3.upload(uploadParams).promise();
-    console.log(uploadResult)
     const result = plainToInstance(UploadOutput, {
       key: uploadResult.Key,
-      url: `https://prime-edu.sgp1.cdn.digitaloceanspaces.com/lectures/${data.slug}`,
+      url: `https://prime-edu.sgp1.cdn.digitaloceanspaces.com/lectures/${data.slug}.mp4`,
     });
     return {
       error: false,
@@ -113,7 +112,7 @@ export class FileService implements OnModuleInit {
     end?: number,
   ): Promise<Readable> {
     const range = `bytes=${start}-${end}`;
-
+    
     const res = await this.s3
       .getObject({
         Key: key,
