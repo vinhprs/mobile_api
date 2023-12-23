@@ -119,4 +119,37 @@ export class CommentsService {
       code: 200,
     };
   }
+
+  async getTeacherEvaluation(
+    filter: FilterCommentInput
+  ): Promise<BaseApiResponse<BasePaginationResponse<CommentOutput>>> {
+    const { limit, page, teacherId } = filter;
+    const builder = this.commentRepository
+      .createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.lecture', 'lecture')
+      .leftJoinAndSelect('lecture.section', 'section')
+      .leftJoinAndSelect('section.course', 'course')
+      .andWhere('course.teacher_id = :teacher_id', { teacher_id: teacherId });
+
+    if (limit) builder.take(limit);
+    if (page) builder.skip((page - 1) * limit);
+    builder.orderBy('comment.likeCount', 'DESC');
+    builder.addOrderBy('comment.createdAt', 'DESC');
+
+    const [comments, total] = await builder.getManyAndCount();
+    const result = plainToInstance(CommentOutput, comments, {
+      excludeExtraneousValues: true,
+    });
+
+    return {
+      error: false,
+      data: {
+        listData: result,
+        total,
+        totalPage: Math.ceil(total / limit),
+      },
+      message: MESSAGES.GET_SUCCEED,
+      code: 200,
+    };
+  }
 }

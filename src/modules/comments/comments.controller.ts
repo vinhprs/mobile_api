@@ -27,6 +27,15 @@ export class CommentsController {
     return this.commentService.getCommentByLecture(lectureId, query);
   }
 
+  @Get('/teacher')
+  @Public()
+  @UseInterceptors(ClassSerializerInterceptor)
+  async getTeacherEvaluation(
+    @Query() query: FilterCommentInput,
+  ): Promise<BaseApiResponse<BasePaginationResponse<CommentOutput>>> {
+    return this.commentService.getTeacherEvaluation(query);
+  }
+
   @Get('/course/:id')
   @Public()
   @UseInterceptors(ClassSerializerInterceptor)

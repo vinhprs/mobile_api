@@ -13,7 +13,7 @@ import { BaseApiResponse, BasePaginationResponse } from 'src/shared/dtos';
 import { Public, ReqUser, Roles } from '../../../common';
 import { ROLES } from '../../../shared/enums';
 import { RequestContext } from '../../../shared/request-context/request-context.dto';
-import { CourseOutput } from '../dto';
+import { CourseOutput, StatisticOutput } from '../dto';
 import { CreateCourseDto } from '../dto/create-course.dto';
 import {
   FilterCourseDto,
@@ -36,6 +36,15 @@ export class CourseController {
     @ReqUser() ctx: RequestContext,
   ): Promise<BaseApiResponse<CourseOutput>> {
     return this.courseService.create(ctx.user.id, data);
+  }
+
+  @Get('/teacher/statistic')
+  @Roles(ROLES.TEACHER)
+  @UseInterceptors(ClassSerializerInterceptor)
+  async getCourseStatistic(
+    @ReqUser() ctx: RequestContext,
+  ): Promise<BaseApiResponse<StatisticOutput>> {
+    return this.courseService.getCourseStatistic(ctx.user.id);
   }
 
   @Put('/teacher/public-course')

@@ -191,7 +191,10 @@ export class OrderService {
     const orderInstance = plainToInstance(OrderOutput, order, {
       excludeExtraneousValues: true,
     });
-    const result = plainToInstance(UserOutputDto, orderInstance, {});
+    const result = orderInstance.reduce((accummulator, instance) => {
+      const output =  plainToInstance(UserOutputDto, instance.user, {})
+      return [...accummulator, output]
+    }, [] as UserOutputDto[])
 
     return {
       error: false,

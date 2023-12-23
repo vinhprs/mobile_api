@@ -11,7 +11,7 @@ import { Repository } from 'typeorm';
 import { MESSAGES } from '../../../common/constants';
 import { UserService } from '../../../modules/user/providers';
 import { BaseApiResponse, BasePaginationResponse } from '../../../shared/dtos';
-import { CourseOutput, CreateCourseDto } from '../dto';
+import { CourseOutput, CreateCourseDto, StatisticOutput } from '../dto';
 import {
   FilterCourseDto,
   FilterCourseParticipants,
@@ -330,7 +330,48 @@ export class CourseService {
     filter: FilterCourseParticipants,
   ): Promise<BaseApiResponse<BasePaginationResponse<UserOutputDto>>> {
     const result = await this.orderService.getCourseParticipants(filter);
-
     return result;
+  }
+
+  async getCourseStatistic(
+    techerId: string
+  ): Promise<BaseApiResponse<StatisticOutput>> {
+    const builder = this.courseRepository.createQueryBuilder('course')
+    .andWhere('course.teacher_id = :teacher_id', { teacher_id: techerId })
+    const [total, publicTotal] = await Promise.all([
+      builder.getCount(),
+      builder.clone().andWhere('course.isPublic = TRUE').getCount(),
+    ])
+
+    // Get total students in course
+    const studentsBuilder = builder.clone()    
+    .leftJoinAndSelect('course.cart', 'cart')
+    .leftJoinAndSelect('cart.orderDetails', 'cart_detail')
+    .leftJoinAndSelect('course.orderDetails', 'course_detail')
+    .leftJoinAndSelect('cart_detail.order', 'cart_order')
+    .leftJoinAndSelect('course_detail.order', 'course_order')
+    .andWhere('(cart_order.paymentStatus = TRUE OR course_order.paymentStatus = TRUE)')
+    const paidCourses = await studentsBuilder.getMany();
+    const  listStudent = [];
+    for (const current of paidCourses) {
+      const filter = plainToInstance(FilterCourseParticipants, {
+        courseId: current._id,
+      });
+      const participants = await this.getCourseParticipants(filter);
+      const listStudents = participants.data.listData;
+      listStudent.push(...listStudents);
+    }
+    const uniqueStudentIds = new Set(listStudent.map(student => student._id));
+    const totalStudents = uniqueStudentIds.size;
+    return {
+      error: true,
+      data: {
+        total,
+        publicTotal,
+        totalStudents
+      },
+      message: MESSAGES.GET_SUCCEED,
+      code: 200
+    }
   }
 }

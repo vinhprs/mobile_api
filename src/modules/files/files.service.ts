@@ -7,9 +7,9 @@ import {
 import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
 import { plainToInstance } from 'class-transformer';
-import { BaseApiResponse } from 'src/shared/dtos';
+import { BaseApiResponse } from '../../shared/dtos';
 import { UploadOutput, UploadVideoInput } from './dto';
-import { MESSAGES } from 'src/common/constants';
+import { MESSAGES } from '../../common/constants';
 import { Readable } from 'stream';
 @Injectable()
 export class FileService implements OnModuleInit {
@@ -112,7 +112,6 @@ export class FileService implements OnModuleInit {
     end?: number,
   ): Promise<Readable> {
     const range = `bytes=${start}-${end}`;
-    
     const res = await this.s3
       .getObject({
         Key: key,
