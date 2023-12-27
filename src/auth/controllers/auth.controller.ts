@@ -2,6 +2,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Get,
   Post,
   UseGuards,
   UseInterceptors,
@@ -23,6 +24,8 @@ import {
 } from '../dtos';
 import { LoginInput } from '../dtos/auth-login-input.dto';
 import { JwtRefreshGuard } from '../guards';
+import { AuthGuard } from '@nestjs/passport';
+import { GOOGLE_AUTH } from '../constants/strategy.constant';
 
 /**
  * route /auth/*
@@ -50,6 +53,14 @@ export class AuthController {
     @Body() body: LoginInput,
   ): Promise<BaseApiResponse<UserOutputDto>> {
     return this.authService.login(body);
+  }
+
+  @Get('/login-google')
+  @UseGuards(AuthGuard(GOOGLE_AUTH))
+  loginGoogle(
+    @ReqUser() ctx: RequestContext
+  ): Promise<BaseApiResponse<UserOutputDto>> {
+    return this.authService.loginGoogle(ctx);
   }
 
   @Post('verify-email')

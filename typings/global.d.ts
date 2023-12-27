@@ -45,6 +45,8 @@ export declare global {
       DO_ACCESS_KEY: string;
       DO_SECRECT_KEY: string;
       DO_BUCKET: string;
+      GOOGLE_CLIENT_ID: string;
+      GOOGLE_CLIENT_SECRET: string;
     }
   }
 

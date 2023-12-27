@@ -235,9 +235,9 @@ export class CourseService {
         subCategoryId,
       });
     if (startPrice)
-      queryBuilder.andWhere('course.price >= :startPrice', {startPrice: startPrice * 1000});
+      queryBuilder.andWhere('course.price >= :startPrice', {startPrice});
     if(endPrice)
-      queryBuilder.andWhere('course.price <= :endPrice)', { endPrice: endPrice * 1000 });
+      queryBuilder.andWhere('course.price <= :endPrice', { endPrice });
     if (startDuration && endDuration)
       queryBuilder.andWhere(
         'course.total_duration >= :startDuration AND course.total_duration <= :endDuration',

@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { plainToInstance } from 'class-transformer';
 import { MAIL_TEMPLATE, MESSAGES } from 'src/common/constants/common';
 import { User } from '../modules/user/entities';
-import { BaseApiResponse } from 'src/shared/dtos';
+import { BaseApiResponse } from '../shared/dtos';
 import { generateCode } from '../shared/utils/user.util';
 import { UserOutputDto } from '../modules/user/dto';
 import { UserService } from '../modules/user/providers';
@@ -12,6 +12,7 @@ import { JwtPayload, Payload, RefreshTokenPayload } from './auth.interface';
 import { ForgotPassword, RegisterInput } from './dtos';
 import { LoginInput } from './dtos/auth-login-input.dto';
 import { ConfigService } from '@nestjs/config';
+import { RequestContext } from '../shared/request-context/request-context.dto';
 
 @Injectable()
 export class AuthService {
@@ -89,6 +90,32 @@ export class AuthService {
       message: MESSAGES.UPDATE_SUCCEED,
       code: 200,
     });
+  }
+
+  public async loginGoogle(
+    ctx: RequestContext
+  ): Promise<BaseApiResponse<UserOutputDto>> {
+    if(!ctx.user) 
+      throw new HttpException(
+        {
+          error: true,
+          data: null,
+          message: MESSAGES.UNAUTHORIZED,
+          code: 401,
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    const jwt = this.generateAccessToken(ctx.user);
+    return plainToInstance(BaseApiResponse<UserOutputDto>, {
+      error: false,
+      data: {
+        token: jwt,
+        infoUser: ctx.user,
+      },
+      message: MESSAGES.UPDATE_SUCCEED,
+      code: 200,
+    });
+    
   }
 
   public generateToken(user: User | UserOutputDto): {
