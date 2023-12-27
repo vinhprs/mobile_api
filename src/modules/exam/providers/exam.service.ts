@@ -22,6 +22,8 @@ import {
 } from '../dto/exam-rank-filter.dto';
 import { Exam, UserExam } from '../entities';
 import { QuestionService } from './question.service';
+import { CategoryService } from '../../../modules/category/category.service';
+import { CategoryOutput } from '../../../modules/category/dto';
 
 @Injectable()
 export class ExamService {
@@ -32,6 +34,7 @@ export class ExamService {
     private readonly userExamRepository: Repository<UserExam>,
     private readonly questionService: QuestionService,
     private readonly userService: UserService,
+    private readonly categoryService: CategoryService
   ) {}
 
   async createExam(
@@ -90,10 +93,22 @@ export class ExamService {
         subCategoryId,
       });
     const [exams, count] = await builder.getManyAndCount();
-    const result = plainToInstance(FilterExamOutput, exams, {
+    const instance = plainToInstance(FilterExamOutput, exams, {
       excludeExtraneousValues: true,
     });
-
+    await Promise.all(
+      instance.map(async (exam) => {
+        const [category, subCategory] = await Promise.all([
+          this.categoryService.getCategoryById(exam.categoryId),
+          this.categoryService.getCategoryById(exam.subCategoryId),
+        ]);
+        exam.category = plainToInstance(CategoryOutput, category);
+        exam.subCategory = plainToInstance(CategoryOutput, subCategory);
+      })
+    )
+    const result = plainToInstance(FilterExamOutput, instance, {
+      excludeExtraneousValues: true,
+    });
     return {
       error: false,
       data: {

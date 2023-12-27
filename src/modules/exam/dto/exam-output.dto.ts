@@ -1,5 +1,6 @@
 import { Expose, Type } from 'class-transformer';
 import { QuestionOuput } from './question-output.dto';
+import { CategoryOutput } from '../../../modules/category/dto';
 
 export class FilterExamOutput {
   @Expose()
@@ -22,6 +23,12 @@ export class FilterExamOutput {
 
   @Expose()
   createdAt: Date;
+
+  @Expose()
+  category?: CategoryOutput;
+
+  @Expose()
+  subCategory?: CategoryOutput;
 }
 
 export class ExamDetailOutput extends FilterExamOutput {
