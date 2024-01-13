@@ -93,9 +93,9 @@ export class AuthService {
   }
 
   public async loginGoogle(
-    ctx: RequestContext
+    ctx: RequestContext,
   ): Promise<BaseApiResponse<UserOutputDto>> {
-    if(!ctx.user) 
+    if (!ctx.user)
       throw new HttpException(
         {
           error: true,
@@ -115,7 +115,17 @@ export class AuthService {
       message: MESSAGES.UPDATE_SUCCEED,
       code: 200,
     });
-    
+  }
+
+  public async googleLogin(req: any) {
+    if (!req.user) {
+      return 'No user from google';
+    }
+
+    return {
+      message: 'User information from google',
+      user: req.user,
+    };
   }
 
   public generateToken(user: User | UserOutputDto): {

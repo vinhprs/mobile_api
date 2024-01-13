@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Post,
+  Request,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -56,11 +57,19 @@ export class AuthController {
   }
 
   @Get('/login-google')
+  @Public()
   @UseGuards(AuthGuard(GOOGLE_AUTH))
   loginGoogle(
-    @ReqUser() ctx: RequestContext
+    @ReqUser() ctx: RequestContext,
   ): Promise<BaseApiResponse<UserOutputDto>> {
     return this.authService.loginGoogle(ctx);
+  }
+
+  @Get('/redirect')
+  @Public()
+  @UseGuards(AuthGuard(GOOGLE_AUTH))
+  googleAuthRedirect(@Request() req: any) {
+    return this.authService.googleLogin(req);
   }
 
   @Post('verify-email')

@@ -10,6 +10,7 @@ import { PassportModule } from '@nestjs/passport';
 import { STRATEGY_JWT_AUTH } from './constants/strategy.constant';
 import { HttpModule } from '@nestjs/axios';
 import { SharedModule } from 'src/shared/share.module';
+import { GoolgeStrategy } from './strategies/google-auth.strategy';
 
 @Global()
 @Module({
@@ -32,7 +33,12 @@ import { SharedModule } from 'src/shared/share.module';
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, AuthSerializer, ...Object.values(strategies)],
+  providers: [
+    AuthService,
+    AuthSerializer,
+    ...Object.values(strategies),
+    GoolgeStrategy,
+  ],
   controllers: Object.values(controllers),
   exports: [AuthService],
 })
