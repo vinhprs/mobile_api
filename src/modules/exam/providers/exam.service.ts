@@ -34,7 +34,7 @@ export class ExamService {
     private readonly userExamRepository: Repository<UserExam>,
     private readonly questionService: QuestionService,
     private readonly userService: UserService,
-    private readonly categoryService: CategoryService
+    private readonly categoryService: CategoryService,
   ) {}
 
   async createExam(
@@ -104,8 +104,8 @@ export class ExamService {
         ]);
         exam.category = plainToInstance(CategoryOutput, category);
         exam.subCategory = plainToInstance(CategoryOutput, subCategory);
-      })
-    )
+      }),
+    );
     const result = plainToInstance(FilterExamOutput, instance, {
       excludeExtraneousValues: true,
     });
