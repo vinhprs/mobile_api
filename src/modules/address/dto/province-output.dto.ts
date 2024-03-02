@@ -1,20 +1,21 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
 export class ProvinceOutput {
   @Expose()
-  @ApiProperty()
-  public name: string;
+  public province_id: string;
 
   @Expose()
-  @ApiProperty()
-  public code: number;
+  public province_name: number;
 
   @Expose()
-  @ApiProperty()
-  public division_type: string;
+  public province_type: string;
 
   @Expose()
-  @ApiProperty()
-  public districts: ProvinceOutput[];
+  district_id: string;
+
+  @Expose()
+  district_name: string;
+
+  @Expose()
+  district_type: string;
 }

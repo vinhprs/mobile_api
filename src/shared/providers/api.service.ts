@@ -8,19 +8,16 @@ import { deleteKey } from '../utils/object.util';
 export class ApiService {
   constructor(private readonly httpService: HttpService) {}
 
-  async get(
-    domain: string,
-    path: string,
-    code?: number | string,
-  ): Promise<any> {
-    path = code ? `${path}/${code}` : '/';
+  async get(domain: string, path: string, provinceId?: string): Promise<any> {
+    path = provinceId ? `${path}/${provinceId}` : path;
     const axiosConfig: AxiosRequestConfig = {
       method: 'get',
-      url: encodeURI(`${domain}${path}?depth=2`),
+      url: encodeURI(`${domain}${path}`),
       headers: {
         'Content-Type': 'application/json',
       },
     };
+    console.log(axiosConfig.url);
     return firstValueFrom(this.httpService.request(axiosConfig))
       .then((res) => res.data)
       .catch((e) => {

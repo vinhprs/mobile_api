@@ -12,8 +12,8 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class AddressService {
-  PATH = '/p';
-  DOMAIN = 'https://provinces.open-api.vn/api';
+  PATH = '/province';
+  DOMAIN = 'https://vapi.vnappmob.com/api';
   constructor(
     @InjectRepository(Address)
     private readonly addressRepository: Repository<Address>,
@@ -22,11 +22,14 @@ export class AddressService {
   ) {}
 
   async getAddress(
-    code: number,
     path: string,
+    provinceId?: string,
   ): Promise<BaseApiResponse<ProvinceOutput[]>> {
     const domain = this.config.get<string>('vnProvinceDomain') || this.DOMAIN;
-    const provinces: ProvinceOutput[] = await this.api.get(domain, path, code);
+    const provinces: ProvinceOutput[] = (
+      await this.api.get(domain, path, provinceId)
+    ).results;
+    console.log('provinces', provinces);
     const result = plainToInstance(ProvinceOutput, provinces, {
       excludeExtraneousValues: true,
     });

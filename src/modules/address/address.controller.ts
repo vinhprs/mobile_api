@@ -2,7 +2,7 @@ import { Controller, Get, Query } from '@nestjs/common';
 import { AddressService } from './address.service';
 import { BaseApiResponse } from '../../shared/dtos';
 import { ProvinceOutput } from './dto';
-import { Public } from 'src/common';
+import { Public } from '../../common';
 
 @Controller('')
 export class AddressController {
@@ -10,17 +10,15 @@ export class AddressController {
 
   @Get('province')
   @Public()
-  async getAllProvinces(
-    @Query('code') code: number,
-  ): Promise<BaseApiResponse<ProvinceOutput[]>> {
-    return this.addressService.getAddress(code, '/p');
+  async getAllProvinces(): Promise<BaseApiResponse<ProvinceOutput[]>> {
+    return this.addressService.getAddress('/province');
   }
 
   @Get('district')
   @Public()
   async getDistrict(
-    @Query('code') code: number,
+    @Query('provinceId') provinceId: string,
   ): Promise<BaseApiResponse<ProvinceOutput[]>> {
-    return this.addressService.getAddress(code, '/d');
+    return this.addressService.getAddress('/province/district', provinceId);
   }
 }
