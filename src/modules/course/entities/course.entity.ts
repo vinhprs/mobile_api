@@ -3,6 +3,7 @@ import { Section } from './section.entity';
 import { CourseBookmark } from '../../../modules/course-bookmark/entities';
 import { Cart } from '../../../modules/cart/entities/cart.entity';
 import { OrderDetail } from '../../../modules/order/entities';
+import { Chat } from '../../../modules/chat/entities/chat.entity';
 
 @Entity()
 export class Course {
@@ -79,4 +80,7 @@ export class Course {
 
   @OneToMany(() => OrderDetail, (detail) => detail.course)
   orderDetails: OrderDetail[];
+
+  @OneToMany(() => Chat, (chat) => chat.course)
+  chat: Chat[];
 }

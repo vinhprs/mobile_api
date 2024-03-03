@@ -4,7 +4,15 @@
     "paths": {
       // https://docs.nestjs.com/cli/scripts#build
       // https://nodejs.org/api/packages.html#imports
-      "#entity/*": ["./src/entity/*"],
+      "@/*": ["*"],
+      "@auth/*": ["auth/*"],
+      "@common/*": ["common/*"],
+      "@config/*": ["config/*"],
+      "@modules/*": ["modules/*"],
+      "@share/*": ["shared/*"],
+      "@admin/*": ["admin/*"],
+      "@gateway/*": ["gateway/*"],
+      "@payment/*": ["payment/*"]
     },
     "target": "ES2019",
     "outDir": "dist",

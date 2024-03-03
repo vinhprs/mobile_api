@@ -25,6 +25,8 @@ import { PaymentModule } from './payment/payment.module';
 import { OrderModule } from './modules/order/order.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { AdminModule } from './admin/admin.module';
+import { ChatModule } from './modules/chat/chat.module';
+import { GatewayModule } from './gateway/gateway.module';
 
 @Module({
   imports: [
@@ -148,6 +150,8 @@ import { AdminModule } from './admin/admin.module';
     OrderModule,
     CommentsModule,
     AdminModule,
+    ChatModule,
+    GatewayModule,
   ],
   providers: [
     // Global Guard, Authentication check on all routers

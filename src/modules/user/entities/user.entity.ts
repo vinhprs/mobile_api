@@ -15,6 +15,7 @@ import { CourseBookmark } from '../../../modules/course-bookmark/entities';
 import { Cart } from '../../../modules/cart/entities/cart.entity';
 import { Order } from '../../../modules/order/entities/order.entity';
 import { Comment } from '../../../modules/comments/entities/comment.entity';
+import { Message } from '../../../modules/chat/entities/message.entity';
 @Entity({ name: 'user' })
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -122,4 +123,7 @@ export class User {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
+
+  @OneToMany(() => Message, (msg) => msg.sender)
+  message: Comment[];
 }
