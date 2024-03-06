@@ -121,7 +121,7 @@ export class CommentsService {
   }
 
   async getTeacherEvaluation(
-    filter: FilterCommentInput
+    filter: FilterCommentInput,
   ): Promise<BaseApiResponse<BasePaginationResponse<CommentOutput>>> {
     const { limit, page, teacherId } = filter;
     const builder = this.commentRepository

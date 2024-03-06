@@ -1,12 +1,12 @@
-import { Expose } from "class-transformer";
+import { Expose } from 'class-transformer';
 
 export class StatisticOutput {
-    @Expose()
-    total: number;
+  @Expose()
+  total: number;
 
-    @Expose()
-    publicTotal: number;
+  @Expose()
+  publicTotal: number;
 
-    @Expose()
-    totalStudents: number;
+  @Expose()
+  totalStudents: number;
 }

@@ -45,9 +45,9 @@ export class LectureService {
   }
 
   async getLectureVideo(
-    ctx: RequestContext, 
-    slug: string, 
-    res: Response
+    ctx: RequestContext,
+    slug: string,
+    res: Response,
   ): Promise<void> {
     const key = `${slug}.mp4`;
     const filesize = await this.fileService.getFileSize(key);

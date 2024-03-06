@@ -29,8 +29,8 @@ export class FilesController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadVideo(
     @UploadedFile() file: Express.Multer.File,
-    @Body() data: UploadVideoInput
+    @Body() data: UploadVideoInput,
   ): Promise<BaseApiResponse<UploadOutput>> {
-    return this.filesService.uploadVideo(data , file);
+    return this.filesService.uploadVideo(data, file);
   }
 }

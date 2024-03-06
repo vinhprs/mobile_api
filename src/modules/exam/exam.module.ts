@@ -7,9 +7,9 @@ import { UserModule } from '../user/user.module';
 import { CategoryModule } from '../category/category.module';
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Question, Exam, UserExam]), 
+    TypeOrmModule.forFeature([Question, Exam, UserExam]),
     UserModule,
-    CategoryModule
+    CategoryModule,
   ],
   controllers: Object.values(controllers),
   providers: Object.values(providers),
